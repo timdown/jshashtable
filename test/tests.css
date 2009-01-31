@@ -1,0 +1,38 @@
+body {
+	font-family: verdana, arial, helvetica, sans-serif;
+	font-size: 81.25%;
+}
+
+h2 {
+	font-size: 123.07%;
+}
+
+div.xn_test_suite_container {
+	border: solid #cccccc 1px;
+	padding: 5px;
+}
+
+div.xn_test_progressbar_container {
+	border: solid black 1px;
+}
+
+div.xn_test_progressbar_container div {
+	width: 0%;
+	height: 2em;
+}
+
+div.xn_test_progressbar_container *.success {
+	background-color: #00ff00;
+}
+
+div.xn_test_progressbar_container *.failure {
+	background-color: red;
+}
+
+dl *.success {
+	color: green;
+}
+
+dl *.failure {
+	color: red;
+}

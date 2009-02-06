@@ -267,31 +267,28 @@ var xn = new Object();
 			return;
 		}
 
-		var self = this;
+		var suite = this;
 		var t = this.tests[this._currentIndex++];
 
-		if (isFunction(self.setUp)) {
-			self.setUp.apply(self, [t]);
+		if (isFunction(suite.setUp)) {
+			suite.setUp.apply(suite, [t]);
 		}
 
 		t._run();
+		
+		function afterTest() {
+			if (isFunction(suite.tearDown)) {
+				suite.tearDown.apply(suite, [t]);
+			}
+			suite.log("finished test [%s]", t.name);
+			suite.updateProgressBar();
+			suite.runNextTest();
+		}
+		
 		if (t.isAsync) {
-			t.whenFinished = function() {
-				if (isFunction(self.tearDown)) {
-					self.tearDown.apply(self, [t]);
-				}
-				self.log("finished test [%s]", t.name);
-				self.updateProgressBar();
-				self.runNextTest();
-			}
+			t.whenFinished = afterTest;
 		} else {
-			// sync, so wrap it up
-			if (isFunction(self.tearDown)) {
-				self.tearDown.apply(self, [t]);
-			}
-			self.log("finished test [%s]", t.name);
-			this.updateProgressBar();
-			self.runNextTest();
+			setTimeout(afterTest, 1);
 		}
 	};
 

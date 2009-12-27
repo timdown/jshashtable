@@ -362,6 +362,50 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
 		t.assertEquals(h.get(o), "h");
 	});
 
+	s.test("each test", function(t) {
+		var h = new Hashtable();
+		var o = {};
+
+		h.put(2, "bus");
+		h.put(o, "h");
+
+		var eachCount = 0, lastKey = null;
+
+		h.each(function(key, val) {
+			eachCount++;
+			t.assertEquals(val, h.get(key));
+			t.assert(key === o || key ===2);
+			t.assert(!lastKey || (key !== lastKey));
+		});
+
+		t.assertEquals(eachCount, 2);
+	});
+
+	s.test("remove multiple test", function(t) {
+		var h = new Hashtable();
+		h.put("h1", "h1");
+		h.put("h2", "h2");
+		h.put("h3", "h3");
+		h.put("h4", "h4");
+		h.put("h5", "h5");
+		console.log(h.keys());
+		h.remove("h5");
+		console.log(h.keys());
+	});
+
+
+	s.test("remove non-existent test", function(t) {
+		var h = new Hashtable();
+		h.remove("Non-existent");
+	});
+
+	s.test("remove non-existent test 2", function(t) {
+		var h = new Hashtable();
+		h.put("test", "thing");
+		h.remove("test");
+		h.remove("test");
+	});
+
 	s.test("Docs example 1", function(t) {
 		var h = new Hashtable();
 		h.put("Dave", "human");

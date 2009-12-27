@@ -13,7 +13,7 @@
 	<body>
 		<div id="container" class="nonav">
 			<div id="header">
-				<h1>jshashtable</h1>
+				<h1>jshashtable 2.0</h1>
 				<div id="nav">
 					<span class="navitem">home</span>
 					| <a class="navitem" href="http://code.google.com/p/jshashtable/downloads/list" target="_blank" title="Download (opens in new window)">download</a>
@@ -22,7 +22,7 @@
 				</div>
 			</div>
 			<div id="content">
-				<h1>jshashtable</h1>
+				<h1>jshashtable 2.0</h1>
 				<div id="toc">
 					<h2>Contents</h2>
 					<ul>
@@ -38,6 +38,12 @@
 						jshashtable is a JavaScript implementation of a hash table. It associates objects
 						("keys") with other objects ("values"). Each key is associated with precisely one value.
 					</p>
+                    <p>
+                        Version 2.0 of jshashtable features significant performance improvements over version 1.0
+                        (typically 200% faster for <code>put</code> and <code>get</code> operations) and adds a few
+                        convenience methods: <code>clone()</code>, <code>putAll()</code>, <code>entries()</code> and
+                        <code>each()</code>.
+                    </p>
 					<p class="linktotop">
 						<a href="#container">Top</a>
 					</p>
@@ -71,10 +77,10 @@
 &lt;script type="text/javascript"&gt;
 	var h = new Hashtable();
 	h.put("Dave", "human");
-	
+
 	var fido = { name: "Fido" };
 	h.put(fido, "dog");
-	
+
 	alert( h.get(fido) ); // "dog"
 &lt;/script&gt;
 </pre>
@@ -178,7 +184,7 @@ alert( getColourAt(1, 2) ); // Alerts null
 						not the self same object as the original <code>Point</code> that got used as key in the <code>coloursForPoints</code>
 						hash table. This is clearly not the ideal behaviour - any two <code>Point</code> objects with the same x and y values
 						are to all intents and purposes the same thing. What we need is a way of defining when two objects
-						are equal. By default, jshashtable uses the equivalence (<code>===</code>) operator in JavaScript. However,
+						are equal. By default, jshashtable uses the strict equals (<code>===</code>) operator in JavaScript. However,
 						if one of the objects being compared has an <code>equals</code> method, it will use that instead. We can
 						implement an <code>equals</code> method in the above example to get the behaviour we want:
 					</p>
@@ -285,7 +291,7 @@ Point.prototype.hashCode = function(obj) {
 								<li class="param">
 									<code class="paramname">equalityFunction</code>
 									<div>
-										A function that checks for equality bewteen two keys with the same hash code.
+										A function that checks for equality between two keys with the same hash code.
 										Two keys that are considered equal will map to the same value in the hash table.
 										This function is passed the two objects to be compared as its parameters.
 										If not provided, the hash table checks whether either object being compared has an
@@ -307,6 +313,30 @@ Point.prototype.hashCode = function(obj) {
 								</p>
 							</div>
 						</li>
+                        <li class="method">
+                            <div class="methodsignature"><code>void <strong>putAll</strong>(Hashtable <em>hashtable</em>[, Function <em>collisionCallback</em>])</code></div>
+                            <div class="summary">
+                                <p class="new">New in version 2.0</p>
+                                <p>
+                                    Adds all entries from the supplied hash table to this hash table. For any key in the
+                                    supplied hash table for which an entry already exists in this hash table, the
+                                    optional callback function <code>collisionCallback</code> is called to resolve the
+                                    conflict. This function should accept three parameters:
+                                </p>
+                                <ul>
+                                    <li><code>key</code>: the key for the conflicting entry;</li>
+                                    <li><code>thisValue</code>: the current value for this key in the current hash
+                                        table;</li>
+                                    <li><code>value</code>: the value for this key in the hash table supplied.</li>
+                                </ul>
+                                <p>
+                                    The value returned by the collision callback function will be used as the value
+                                    for the new entry in the current hash table. If no collision callback function is
+                                    supplied, the existing value in the current hash table will be overwritten by the
+                                    value in the hash table supplied.
+                                </p>
+                            </div>
+                        </li>
 						<li class="method">
 							<div class="methodsignature"><code>void <strong>get</strong>(Object <em>key</em>)</code></div>
 							<div class="summary">
@@ -364,6 +394,16 @@ Point.prototype.hashCode = function(obj) {
 								</p>
 							</div>
 						</li>
+                        <li class="method">
+                            <div class="methodsignature"><code>Array <strong>entries</strong>()</code></div>
+                            <p class="new">New in version 2.0</p>
+                            <div class="summary">
+                                <p>
+                                    Returns an array containing all the entries contained in the hash table. Each entry
+                                    is a two element array containing the key and value respectively for that entry.
+                                </p>
+                            </div>
+                        </li>
 						<li class="method">
 							<div class="methodsignature"><code>void <strong>remove</strong>(Object <em>key</em>)</code></div>
 							<div class="summary">
@@ -380,6 +420,29 @@ Point.prototype.hashCode = function(obj) {
 								</p>
 							</div>
 						</li>
+                        <li class="method">
+                            <div class="methodsignature"><code>Hashtable <strong>clone</strong>()</code></div>
+                            <p class="new">New in version 2.0</p>
+                            <div class="summary">
+                                <p>
+                                    Creates and returns a shallow copy of the hash table.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="method">
+                            <div class="methodsignature"><code>void <strong>each</strong>(Function <em>callback</em>)</code></div>
+                            <p class="new">New in version 2.0</p>
+                            <div class="summary">
+                                <p>
+                                    Iterates over all the entries in the hash table, calling the <code>callback</code>
+                                    function for each entry. This function is passed two parameters:
+                                </p>
+                                <ul>
+                                    <li><code>key</code>: the key for the current entry;</li>
+                                    <li><code>value</code>: the value for the current entry.</li>
+                                </ul>
+                            </div>
+                        </li>
 					</ul>
 					<p class="linktotop">
 						<a href="#container">Top</a>

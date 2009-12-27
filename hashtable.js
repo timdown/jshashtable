@@ -136,7 +136,7 @@ var Hashtable = (function() {
 		removeEntryForKey: function(key) {
 			var result = this.getEntryIndexForKey(key);
 			if (typeof result == NUMBER) {
-				arrayRemoveAt(this.entries, result[0]);
+				arrayRemoveAt(this.entries, result);
 				return true;
 			}
 			return false;
@@ -180,11 +180,10 @@ var Hashtable = (function() {
 	// Supporting functions for searching hashtable bucket items
 
 	function searchBucketItems(bucketItems, bucketKey) {
-		var i = bucketItems.length, bucketItem;
+		var i = bucketItems.length;
 		while (i--) {
-			bucketItem = bucketItems[i];
-			if ( bucketKey === bucketItem[0] ) {
-				return bucketItem;
+			if ( bucketKey === bucketItems[i][0] ) {
+				return i;
 			}
 		}
 		return null;
@@ -200,13 +199,13 @@ var Hashtable = (function() {
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	function Hashtable(hashingFunction, equalityFunction) {
+	function Hashtable(hashingFunctionParam, equalityFunctionParam) {
 		var that = this;
 		var bucketItems = [];
 		var bucketItemsByBucketKey = {};
 
-		hashingFunction = (typeof hashingFunction == FUNCTION) ? hashingFunction : keyForObject;
-		equalityFunction = (typeof equalityFunction == FUNCTION) ? equalityFunction : null;
+		var hashingFunction = (typeof hashingFunctionParam == FUNCTION) ? hashingFunctionParam : keyForObject;
+		var equalityFunction = (typeof equalityFunctionParam == FUNCTION) ? equalityFunctionParam : null;
 
 		this.put = function(key, value) {
 			checkKey(key);
@@ -301,7 +300,7 @@ var Hashtable = (function() {
 		this.remove = function(key) {
 			checkKey(key);
 
-			var bucketKey = hashingFunction(key), result;
+			var bucketKey = hashingFunction(key), bucketItemIndex;
 
 			// Check if a bucket exists for the bucket key
 			var bucket = getBucketForBucketKey(bucketItemsByBucketKey, bucketKey);
@@ -312,8 +311,8 @@ var Hashtable = (function() {
 					// Entry was removed, so check if bucket is empty
 					if (!bucket.entries.length) {
 						// Bucket is empty, so remove it
-						result = searchBucketItems(bucketItems, bucketKey);
-						arrayRemoveAt(bucketItems, result[0]);
+						bucketItemIndex = searchBucketItems(bucketItems, bucketKey);
+						arrayRemoveAt(bucketItems, bucketItemIndex);
 						bucketItemsByBucketKey[bucketKey] = null;
 						delete bucketItemsByBucketKey[bucketKey];
 					}
@@ -329,11 +328,11 @@ var Hashtable = (function() {
 			return total;
 		};
 
-		this.each = function(f) {
+		this.each = function(callback) {
 			var entries = that.entries(), i = entries.length, entry;
 			while (i--) {
 				entry = entries[i];
-				f( entry[0], entry[1] );
+				callback( entry[0], entry[1] );
 			}
 		};
 
@@ -355,7 +354,7 @@ var Hashtable = (function() {
 		};
 
 		this.clone = function() {
-			var clone = new Hashtable(hashingFunction, equalityFunction);
+			var clone = new Hashtable(hashingFunctionParam, equalityFunctionParam);
 			clone.putAll(that);
 			return clone;
 		};

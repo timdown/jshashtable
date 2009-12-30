@@ -38,6 +38,51 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
 		t.assertEquals(null, h.get(o));
 	});
 
+	s.test("Removal get first added test", function(t) {
+		var h = new Hashtable();
+		var o1 = {}, o2 = {};
+		h.put(o1, "Test 1");
+		h.put(o2, "Test 2");
+		h.remove(o1);
+		t.assertEquals(1, h.size());
+		t.assertEquals(null, h.get(o1));
+		t.assertEquals("Test 2", h.get(o2));
+	});
+
+	s.test("Removal get last added test", function(t) {
+		var h = new Hashtable();
+		var o1 = {}, o2 = {};
+		h.put(o1, "Test 1");
+		h.put(o2, "Test 2");
+		var r = h.remove(o2);
+		t.assertEquals(1, h.size());
+		t.assertEquals(null, h.get(o2));
+		t.assertEquals("Test 1", h.get(o1));
+		t.assertEquals("Test 2", r);
+	});
+
+	s.test("Removal get first added with hashCode test", function(t) {
+		var h = new Hashtable();
+		var o1 = { hashCode: function() { return 1; } }, o2 = { hashCode: function() { return 2; } };
+		h.put(o1, "Test 1");
+		h.put(o2, "Test 2");
+		h.remove(o1);
+		t.assertEquals(1, h.size());
+		t.assertEquals(null, h.get(o1));
+		t.assertEquals("Test 2", h.get(o2));
+	});
+
+	s.test("Removal get last added with hashCode test", function(t) {
+		var h = new Hashtable();
+		var o1 = { hashCode: function() { return 1; } }, o2 = { hashCode: function() { return 2; } };
+		h.put(o1, "Test 1");
+		h.put(o2, "Test 2");
+		h.remove(o2);
+		t.assertEquals(1, h.size());
+		t.assertEquals(null, h.get(o2));
+		t.assertEquals("Test 1", h.get(o1));
+	});
+
 	s.test("Replace test", function(t) {
 		var h = new Hashtable();
 		var o = {};
@@ -52,6 +97,16 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
 		h.put(o, "Test 1");
 		h.put(o, "Test 2");
 		t.assertEquals(1, h.size());
+	});
+
+	s.test("Replace return value test", function(t) {
+		var h = new Hashtable();
+		var o = {};
+		var v1 = h.put(o, "Test 1");
+		var v2 = h.put(o, "Test 2");
+		t.assertEquals("Test 2", h.get(o));
+		t.assertNull(v1);
+		t.assertEquals("Test 1", v2);
 	});
 
 	s.test("Contains key test on empty", function(t) {
@@ -161,7 +216,7 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
 		equals: function(obj) {
 			return this.name === obj.name;
 		}
-	}
+	};
 
 	s.test("getHashCode test 1", function(t) {
 		var o1 = new TestObject("one");
@@ -201,7 +256,7 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
 		equals: function(obj) {
 			return this === obj;
 		}
-	}
+	};
 
 	s.test("equals test", function(t) {
 		var o1 = new TestObject2("one");
@@ -249,7 +304,7 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
 		var o2 = new TestObject("two");
 		var o3 = new TestObject("three");
 
-		function hashToConstant(obj) {
+		function hashToConstant() {
 			return "A constant hash";
 		}
 
@@ -312,6 +367,24 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
 		t.assertFalse(h2.containsKey("new1"));
 	});
 
+	s.test("Clone hash code generator and equality function test", function(t) {
+		var h = new Hashtable(function() { return "always the same"}, function() { return true; }), h2;
+		h.put({}, 1);
+		h.put(2, "bus");
+		h.put("cheese", {});
+
+		t.assertEquals(1, h.size());
+
+		h2 = h.clone();
+
+		h2.put("new", 2);
+		t.assertEquals(1, h2.size());
+
+		t.assert(h2.containsKey("new"));
+		t.assert(h2.containsKey("anything"));
+		t.assertEquals(2, h2.get( {anyOldObject: 1} ));
+	});
+
 	s.test("putAll basic test", function(t) {
 		var h = new Hashtable(), h2 = new Hashtable();
 		var o = {};
@@ -327,7 +400,7 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
 		t.assert(h.containsKey("test"));
 	});
 
-	s.test("putAll default collision test", function(t) {
+	s.test("putAll default conflict test", function(t) {
 		var h = new Hashtable(), h2 = new Hashtable();
 		var o = {};
 		h.put(2, "bus");
@@ -341,7 +414,7 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
 		t.assertEquals(h.get(o), "h2");
 	});
 
-	s.test("putAll custom collision test", function(t) {
+	s.test("putAll custom conflict test", function(t) {
 		var h = new Hashtable(), h2 = new Hashtable();
 		var o = {};
 		var collisionResolver = function(key, v1, v2) {
@@ -381,39 +454,31 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
 		t.assertEquals(eachCount, 2);
 	});
 
-	s.test("remove multiple test", function(t) {
-		var h = new Hashtable();
-		h.put("h1", "h1");
-		h.put("h2", "h2");
-		h.put("h3", "h3");
-		h.put("h4", "h4");
-		h.put("h5", "h5");
-		console.log(h.keys());
-		h.remove("h5");
-		console.log(h.keys());
-	});
-
-
 	s.test("remove non-existent test", function(t) {
 		var h = new Hashtable();
-		h.remove("Non-existent");
+		var r = h.remove("Non-existent");
+		t.assertNull(r);
 	});
 
 	s.test("remove non-existent test 2", function(t) {
 		var h = new Hashtable();
 		h.put("test", "thing");
-		h.remove("test");
-		h.remove("test");
+		var r1 = h.remove("test");
+		var r2 = h.remove("test");
+		t.assertEquals("thing", r1);
+		t.assertNull(r2);
 	});
 
 	s.test("Docs example 1", function(t) {
-		var h = new Hashtable();
-		h.put("Dave", "human");
+		var typesHash = new Hashtable();
 
-		var fido = { name: "Fido" };
-		h.put(fido, "dog");
+		typesHash.put("A string", "string");
+		typesHash.put(1, "number");
 
-		t.assertEquals("dog", h.get(fido) );
+		var o = new Object();
+		typesHash.put(o, "object");
+
+		t.assertEquals("object", typesHash.get(o));
 	});
 
 	s.test("Docs example 2", function(t) {
@@ -496,7 +561,7 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
 		        (obj.y === this.y);
 		};
 
-		Point.prototype.hashCode = function(obj) {
+		Point.prototype.hashCode = function() {
 		    return "Point:" + this.x + "," + this.y;
 		};
 
@@ -511,5 +576,32 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
 
 		t.assertEquals( "green", getColourAt(1, 2) );
 	});
+
+	s.test("Docs example 8", function(t) {
+		function Point(x, y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		function hashPoint(p) {
+			return "Point:" + p.x + "," + p.y;
+		}
+
+		function pointsEqual(p1, p2) {
+			return p1.x === p2.x && p1.y === p2.y;
+		}
+
+		var coloursForPoints = new Hashtable(hashPoint, pointsEqual);
+
+		function getColourAt(x, y) {
+			var point = new Point(x, y);
+			return coloursForPoints.get(point);
+		}
+
+		coloursForPoints.put( new Point(1, 2), "green" );
+
+		t.assertEquals( "green", getColourAt(1, 2) );
+	});
+
 
 });

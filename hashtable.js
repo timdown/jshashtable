@@ -17,12 +17,12 @@
 /**
  * jshashtable
  *
- * jshashtable is a JavaScript implementation of a hash table. It creates a
- * single constructor function called Hashtable in the global scope.
+ * jshashtable is a JavaScript implementation of a hash table. It creates a single constructor function called Hashtable
+ * in the global scope.
  *
  * Author: Tim Down <tim@timdown.co.uk>
  * Version: 2.0
- * Build date: 20 December 2009
+ * Build date: 30 December 2009
  * Website: http://www.timdown.co.uk/jshashtable
  */
 
@@ -30,7 +30,6 @@ var Hashtable = (function() {
 	var UNDEFINED = "undefined",
 	    FUNCTION = "function",
 	    STRING = "string",
-	    NUMBER = "number",
 		EQUALS = "equals",
 	    HASH_CODE = "hashCode",
 	    TO_STRING = "toString";
@@ -102,13 +101,22 @@ var Hashtable = (function() {
 		}
 	}
 
-	function createBucketSearcher(returnBool, returnEntryIndex) {
+	var EXISTENCE = 0, ENTRY = 1, ENTRY_INDEX_AND_VALUE = 2;
+
+	function createBucketSearcher(mode) {
 		return function(key) {
 			var i = this.entries.length, entry, equals = this.getEqualityFunction(key);
 			while (i--) {
 				entry = this.entries[i];
 				if ( equals(key, entry[0]) ) {
-					return returnBool ? true : (returnEntryIndex ? i : entry);
+					switch (mode) {
+						case EXISTENCE:
+							return true;
+						case ENTRY:
+							return entry;
+						case ENTRY_INDEX_AND_VALUE:
+							return [ i, entry[1] ];
+					}
 				}
 			}
 			return false;
@@ -129,17 +137,17 @@ var Hashtable = (function() {
 			return (typeof searchValue[EQUALS] == FUNCTION) ? equals_fixedValueHasEquals : equals_fixedValueNoEquals;
 		},
 
-		getEntryForKey: createBucketSearcher(false, false),
+		getEntryForKey: createBucketSearcher(ENTRY),
 
-		getEntryIndexForKey: createBucketSearcher(false, true),
+		getEntryAndIndexForKey: createBucketSearcher(ENTRY_INDEX_AND_VALUE),
 
 		removeEntryForKey: function(key) {
-			var result = this.getEntryIndexForKey(key);
-			if (typeof result == NUMBER) {
-				arrayRemoveAt(this.entries, result);
-				return true;
+			var result = this.getEntryAndIndexForKey(key);
+			if (result) {
+				arrayRemoveAt(this.entries, result[0]);
+				return result[1];
 			}
-			return false;
+			return null;
 		},
 
 		addEntry: function(key, value) {
@@ -158,7 +166,7 @@ var Hashtable = (function() {
 			}
 		},
 
-		containsKey: createBucketSearcher(true, false),
+		containsKey: createBucketSearcher(EXISTENCE),
 
 		containsValue: function(value) {
 			var i = this.entries.length;
@@ -180,9 +188,10 @@ var Hashtable = (function() {
 	// Supporting functions for searching hashtable bucket items
 
 	function searchBucketItems(bucketItems, bucketKey) {
-		var i = bucketItems.length;
+		var i = bucketItems.length, item;
 		while (i--) {
-			if ( bucketKey === bucketItems[i][0] ) {
+			item = bucketItems[i];
+			if ( bucketKey === item[0] ) {
 				return i;
 			}
 		}
@@ -192,8 +201,8 @@ var Hashtable = (function() {
 	function getBucketForBucketKey(bucketItemsByBucketKey, bucketKey) {
 		var bucketItem = bucketItemsByBucketKey[bucketKey];
 
-		// Check that this is a genuine bucket item and not something
-		// inherited from prototype
+		// Check that this is a genuine bucket item and not something inherited from the bucketItemsByBucketKey's
+		// prototype
 		return ( bucketItem && (bucketItem instanceof BucketItem) ) ? bucketItem[1] : null;
 	}
 
@@ -210,7 +219,7 @@ var Hashtable = (function() {
 		this.put = function(key, value) {
 			checkKey(key);
 			checkValue(value);
-			var bucketKey = hashingFunction(key), bucketItem, bucketEntry;
+			var bucketKey = hashingFunction(key), bucketItem, bucketEntry, oldValue = null;
 
 			// Check if a bucket exists for the bucket key
 			var bucket = getBucketForBucketKey(bucketItemsByBucketKey, bucketKey);
@@ -218,8 +227,8 @@ var Hashtable = (function() {
 				// Check this bucket to see if it already contains this key
 				bucketEntry = bucket.getEntryForKey(key);
 				if (bucketEntry) {
-					// This bucket entry is the current mapping of key to value, so replace
-					// old value and we're done.
+					// This bucket entry is the current mapping of key to value, so replace old value and we're done.
+					oldValue = bucketEntry[1];
 					bucketEntry[1] = value;
 				} else {
 					// The bucket does not contain an entry for this key, so add one
@@ -233,6 +242,7 @@ var Hashtable = (function() {
 				bucketItems[bucketItems.length] = bucketItem;
 				bucketItemsByBucketKey[bucketKey] = bucketItem;
 			}
+			return oldValue;
 		};
 
 		this.get = function(key) {
@@ -300,17 +310,18 @@ var Hashtable = (function() {
 		this.remove = function(key) {
 			checkKey(key);
 
-			var bucketKey = hashingFunction(key), bucketItemIndex;
+			var bucketKey = hashingFunction(key), bucketItemIndex, oldValue = null;
 
 			// Check if a bucket exists for the bucket key
 			var bucket = getBucketForBucketKey(bucketItemsByBucketKey, bucketKey);
 
 			if (bucket) {
 				// Remove entry from this bucket for this key
-				if (bucket.removeEntryForKey(key)) {
+				oldValue = bucket.removeEntryForKey(key);
+				if (oldValue !== null) {
 					// Entry was removed, so check if bucket is empty
 					if (!bucket.entries.length) {
-						// Bucket is empty, so remove it
+						// Bucket is empty, so remove it by searching through the bucket items
 						bucketItemIndex = searchBucketItems(bucketItems, bucketKey);
 						arrayRemoveAt(bucketItems, bucketItemIndex);
 						bucketItemsByBucketKey[bucketKey] = null;
@@ -318,6 +329,7 @@ var Hashtable = (function() {
 					}
 				}
 			}
+			return oldValue;
 		};
 
 		this.size = function() {
@@ -336,18 +348,18 @@ var Hashtable = (function() {
 			}
 		};
 
-		this.putAll = function(hashtable, collisionCallback) {
+		this.putAll = function(hashtable, conflictCallback) {
 			var entries = hashtable.entries();
 			var entry, key, value, thisValue, i = entries.length;
-			var hasCollisionCallback = (typeof collisionCallback == FUNCTION);
+			var hasConflictCallback = (typeof conflictCallback == FUNCTION);
 			while (i--) {
 				entry = entries[i];
 				key = entry[0];
 				value = entry[1];
 
-				// Check for collision. The default behaviour is to overwrite the value for an existing key
-				if ( hasCollisionCallback && (thisValue = that.get(key)) ) {
-					value = collisionCallback(key, thisValue, value);
+				// Check for a conflict. The default behaviour is to overwrite the value for an existing key
+				if ( hasConflictCallback && (thisValue = that.get(key)) ) {
+					value = conflictCallback(key, thisValue, value);
 				}
 				that.put(key, value);
 			}

@@ -469,6 +469,40 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
 		t.assertNull(r2);
 	});
 
+	if (window && window.ActiveXObject) {
+		s.test("ActiveXObject test", function(t) {
+			var h = new Hashtable();
+			var x1 = new ActiveXObject("Msxml2.XMLHTTP.6.0");
+			var x2 = new ActiveXObject("Msxml2.XMLHTTP.6.0");
+			h.put(x1, "One");
+			h.put(x2, "Two");
+			t.assertEquals("One", h.get(x1));
+			t.assertEquals("Two", h.get(x2));
+		});
+	}
+
+	if (window && window.document) {
+		s.test("document test", function(t) {
+			var h = new Hashtable();
+			var doc = window.document;
+			doc.expando = false;
+			h.put(doc, "One");
+			t.assertEquals("One", h.get(doc));
+		});
+
+		s.test("document test", function(t) {
+			var h = new Hashtable();
+			var doc = window.document;
+			doc.expando = false;
+			var div = doc.createElement("div");
+			var textNode = doc.createTextNode("test");
+			h.put(div, "One");
+			h.put(textNode, "Two");
+			t.assertEquals("One", h.get(div));
+			t.assertEquals("Two", h.get(textNode));
+		});
+	}
+
 	s.test("Docs example 1", function(t) {
 		var typesHash = new Hashtable();
 

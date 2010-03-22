@@ -2,33 +2,32 @@ body {
 	font-family: Verdana, Arial, Helvetica, Sans-serif;
 	font-size: 75%;
 	color: black;
-	background-color: #eeeeee;
+	background-color: #eee;
 	text-align: center;
-	padding: 0px;
-	margin: 0px;
+	padding: 0;
+	margin: 0;
 }
 
 div#container {
 	width: 770px;
 	text-align: left;
 	line-height: 150%;
-	border-width: 0px 1px 1px 1px;
-	border-color: #cccccc;
-	border-style: solid;
-	background-color: white;
-	color: black;
+    border: 1px solid #ccc;
+    border-top-width: 0;
+    background-color: #fff;
+	color: #000;
 	padding: 10px;
-	margin: 0px auto 10px auto;
+	margin: 0 auto 10px auto;
 }
 
 div#header {
-	margin: 0px;
+	margin: 0;
 }
 
 div#header h1 {
 	font-family: Courier New, Courier, Monospace, Serif;
 	padding: 8px 0 15px 0;
-	margin: 0px;
+	margin: 0;
 	font-size: 200%;
 	font-weight: bold;
 	text-align: right;
@@ -43,7 +42,7 @@ div#nav {
 	font-weight: bold;
 	padding-top: 5px;
 	padding-bottom: 5px;
-	border-bottom: solid #cccccc 1px;
+	border-bottom: solid #ccc 1px;
 	text-align: right;
 	background-color: #f0f0fa;
 }
@@ -53,22 +52,17 @@ div#container.nonav div#content {
 	width: auto;
 }
 
-*.externallinkinfo {
-	float: right;
-	font-style: italic;
-}
-
 div#content h1 {
 	padding: 10px 3px 5px 3px;
-	margin: 5px 0px;
+	margin: 5px 0;
 	font-size: 175%;
 	font-weight: normal;
 }
 
 div#content h2 {
 	background-color: darkgreen;
-	color: white;
-	padding: 0px 3px;
+	color: #fff;
+	padding: 0 3px;
 	font-size: 116.66%;
 	font-weight: bold;
 }
@@ -78,30 +72,30 @@ div#content h2 a {
 }
 
 div#content h3 {
-	padding: 0px 3px;
+	padding: 0 3px;
 	font-size: 116.66%;
 	font-weight: bold;
 	border-style: solid;
-	border-color: #003399;
-	border-width: 1px 0px;
+	border-color: #039;
+	border-width: 1px 0;
 }
 
 div#content h4 {
-	padding: 0px 3px;
+	padding: 0 3px;
 	font-size: 100%;
 	font-weight: bold;
-	border-top: solid #eeeeee 1px;
+	border-top: solid #eee 1px;
 }
 
 div#content h5 {
-	padding: 0px;
-	margin: 3px 0px;
+	padding: 0;
+	margin: 3px 0;
 }
 
 div#footer {
 	margin-top: 20px;
 	padding: 2px;
-	border-top: solid #cccccc 1px;
+	border-top: solid #ccc 1px;
 	font-size: 91.66%;
 }
 
@@ -123,7 +117,7 @@ a.underlined {
 }
 
 a img {
-	border-width: 0px;
+	border-width: 0;
 }
 
 br.clear {
@@ -141,7 +135,7 @@ pre, code {
 }
 
 pre.code, pre.console {
-	border: solid 1px #cccccc;
+	border: solid 1px #ccc;
 	padding: 3px;
 }
 
@@ -152,45 +146,23 @@ pre.code {
 	background-color: #f5f5f5;
 }
 
+span.jsh {
+}
+
 *.new {
 	color: green;
 	font-weight: bold;
 }
 
-*.trace {
-	color: #666666;
-}
-
-*.debug {
-	color: green;
-}
-
-*.info {
-	color: #000099;
-}
-
-*.warn {
-	color: #999900;
-}
-
-*.error {
-	color: red;
-}
-
-*.fatal {
-	color: #660066;
-}
-
-
 div.example, div.panel {
-	border: solid 1px #cccccc;
+	border: solid 1px #ccc;
 	background-color: #f5f5f5;
 	padding: 3px;
 	margin-bottom: 10px;
 }
 
 div.panel h2 {
-	margin: 5px 0px;
+	margin: 5px 0;
 }
 
 div.padded {
@@ -217,7 +189,7 @@ p.linktotop {
 
 ul.propertieslist li.method, ul.propertieslist li.property {
 	margin: 0;
-	padding: 0px 0px 15px 0px;
+	padding: 0 0 15px 0;
 }
 
 ul.propertieslist li *.name {
@@ -226,7 +198,7 @@ ul.propertieslist li *.name {
 }
 
 ul.propertieslist li.method div.methodsignature {
-	margin: 10px 0px;
+	margin: 10px 0;
 	font-size: 116.66%;
 	background-color: #eeeeee;
 }
@@ -259,7 +231,7 @@ div#inPageConsole {
 
 div.iframecontainer {
 	background-color: white;
-	border: solid #cccccc 1px;
+	border: solid #ccc 1px;
 	width: 100%;
 }
 

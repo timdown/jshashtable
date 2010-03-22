@@ -1,29 +1,27 @@
-<?xml version="1.0"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
 	<head>
-		<title>JavaScript Hashtable</title>
-		<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
-		<meta name="author" content="Tim Down - tim@timdown.co.uk" />
-		<meta name="keywords" content="hashtable, hash, JavaScript, DHTML, hashmap" />
-		<meta name="description" content="jshashtable, a JavaScript hash table implementation" />
-		<meta name="robots" content="all" />
-		<link rel="stylesheet" type="text/css" media="screen,print" href="main.css" title="Default" />
+		<title>jshashtable, a JavaScript hash table</title>
+		<meta name="author" content="Tim Down - tim@timdown.co.uk">
+		<meta name="keywords" content="hashtable, hash, JavaScript, DHTML, hashmap">
+		<meta name="description" content="jshashtable, a JavaScript hash table implementation">
+		<meta name="robots" content="all">
+		<link rel="stylesheet" type="text/css" href="main.css" title="Default">
 	</head>
 	<body>
         <div id="container" class="nonav">
             <div id="header">
-                <h1>jshashtable 2.0</h1>
+                <h1>jshashtable 2.1</h1>
                 <div id="nav">
                     <span class="navitem">home</span>
-                    | <a class="navitem" href="http://code.google.com/p/jshashtable/downloads/list" target="_blank"
-                         title="Download (opens in new window)">download</a>
-                    | <a class="navitem" href="http://www.timdown.co.uk/jshashtable" target="_blank">website</a>
-                    | <a class="navitem" href="http://www.timdown.co.uk" target="_blank">timdown.co.uk</a>
+                    | <a class="navitem" href="http://code.google.com/p/jshashtable/downloads/list"
+                         title="Download">download</a>
+                    | <a class="navitem" href="http://www.timdown.co.uk/jshashtable">website</a>
+                    | <a class="navitem" href="http://www.timdown.co.uk">timdown.co.uk</a>
                 </div>
             </div>
             <div id="content">
-                <h1>jshashtable 2.0</h1>
+                <h1>jshashtable 2.1</h1>
                 <div id="toc">
                     <h2>Contents</h2>
                     <ul>
@@ -36,14 +34,17 @@
                 <div id="intro">
                     <h2>Introduction</h2>
                     <p>
-                        jshashtable is a JavaScript implementation of a hash table. It associates objects ("keys") with
-                        other objects ("values"). Each key is associated with precisely one value.
+                        <span class="jsh">jshashtable</span> is a JavaScript implementation of a hash table. It
+                        associates objects ("keys") with other objects ("values"). Each key is associated with precisely
+                        one value.
                     </p>
                     <p>
-                        Version 2.0 of jshashtable features significant performance improvements over version 1.0
-                        (typically 200% faster for <code>put</code> and <code>get</code> operations) and adds a few new
-                        methods: <code>clone()</code>, <code>putAll()</code>, <code>entries()</code> and
-                        <code>each()</code>.
+                        Version 2.0 of <span class="jsh">jshashtable</span> features significant performance
+                        improvements over version 1.0 (typically 200% faster for <code>put</code> and <code>get</code>
+                        operations) and adds a few new methods: <code>clone()</code>, <code>putAll()</code>,
+                        <code>entries()</code> and <code>each()</code>. Version 2.1 is minor upgrade that <a
+                            href="http://code.google.com/p/jshashtable/issues/detail?id=1">allows use of ActiveX
+                        objects as keys in IE</a>.
                     </p>
                     <p class="linktotop">
                         <a href="#container">Top</a>
@@ -55,8 +56,8 @@
                         <li>
                             <h3>Download the code</h3>
                             <p>
-                                <strong><a href="http://code.google.com/p/jshashtable/downloads/list" target="_blank"
-                                           title="Download (opens in new window)">Download jshashtable</a></strong>.
+                                <strong><a href="http://code.google.com/p/jshashtable/downloads/list"
+                                           title="Download">Download jshashtable</a></strong>.
                                 You can download a compressed or uncompressed version of <code>jshashtable.js</code>
                                 which are functionally identical or a zip containing this document and both JavaScript
                                 files.
@@ -98,8 +99,9 @@
                 <div id="usage">
                     <h2>Usage</h2>
                     <p>
-                        jshashtable is a JavaScript implementation of a hash table. It associates objects ("keys") with
-                        other objects ("values"). Each key is associated with precisely one value.
+                        <span class="jsh">jshashtable</span> is a JavaScript implementation of a hash table. It
+                        associates objects ("keys") with other objects ("values"). Each key is associated with precisely
+                        one value.
                     </p>
                     <p>
                         The code is contained in one JavaScript file, which creates a single constructor function called
@@ -144,7 +146,7 @@ alert( o[key1] ); // Alerts "Second", not "First"
                         assignment simply replaces the original value of the property "[object Object]".
                     </p>
                     <p>
-                        With jshashtable, any object can be used as the key:
+                        With <span class="jsh">jshashtable</span>, any object can be used as the key:
                     </p>
                     <pre class="code">
 var key1 = new Object();
@@ -156,9 +158,9 @@ alert( h.get(key1) ); // Alerts "First"
 alert( h.get(key2) ); // Alerts "Second"
 </pre>
                     <p>
-                        The above examples shows use of <code>put()</code> to add a key/value pair to the hash table and
-                        <code>get()</code> to retrieve a value. If a value already exists in the hash table for
-                        the key used, it is replaced with the new value.
+                        The above examples shows use of <code><a href="#put">put()</a></code> to add a key/value pair to
+                        the hash table and <code><a href="#get">get()</a></code> to retrieve a value. If a value already
+                        exists in the hash table for the key used, it is replaced with the new value.
                     </p>
                     <h3>Equality</h3>
                     <p>
@@ -190,10 +192,10 @@ alert( getColourAt(1, 2) ); // Alerts null
                         used as key in the <code>coloursForPoints</code> hash table. This is clearly not the ideal
                         behaviour - any two <code>Point</code> objects with the same x and y values are to all intents
                         and purposes the same thing. What we need is a way of defining when two objects are equal. By
-                        default, jshashtable uses the strict equals (<code>===</code>) operator in JavaScript. However,
-                        if one of the objects being compared has an <code>equals</code> method, it will use that
-                        instead. We can implement an <code>equals</code> method in the above example to get the
-                        behaviour we want:
+                        default, <span class="jsh">jshashtable</span> uses the strict equals (<code>===</code>) operator
+                        in JavaScript. However, if one of the objects being compared has an <code>equals</code> method,
+                        it will use that instead. We can implement an <code>equals</code> method in the above example to
+                        get the behaviour we want:
                     </p>
                     <pre class="code">
 function Point(x, y) {
@@ -220,32 +222,34 @@ alert( getColourAt(1, 2) ); // <span class="new">Alerts "green"</span>
 </pre>
                     <h3>Hash codes</h3>
                     <p>
-                        This works but is still not quite ideal. Internally, jshashtable stores key/values pairs in
-                        arrays, called <em>buckets</em>. When <code>put</code> is called, jshashtable converts the key
-                        into a <em>hash code</em>, and stores the key/value pair in the bucket for that particular hash
-                        code. A hash code in jshashtable is a string so that the buckets themselves can be associated
-                        with hash codes using the JavaScript's built-in square bracket property notation. When
-                        <code>get</code> is called, jshashtable finds the correct bucket for the key it's looking for
-                        and then searches the contents of that bucket for that key. Since the process of locating the
-                        correct bucket is massively faster than searching through a bucket's contents, it is more
-                        efficient to have as many buckets as possible containing the least possible number of items
-                        (ideally one). My tests have shown that for a hash table with 1000 elements, it is around
-                        <strong>70 times faster</strong> to replace or retrieve a value if each key has a unique hash
-                        code than if each key had the same hash code (tested using objects with a very simple
-                        <code>hashCode</code> method). For 10000 elements, it's closer to 300 times faster. So,
-                        generating meaningful hash codes for keys makes the hash table much more efficient.
+                        This works but is still not quite ideal. Internally, <span class="jsh">jshashtable</span> stores
+                        key/values pairs in arrays, called <em>buckets</em>. When <code><a href="#put">put()</a></code>
+                        is called, <span class="jsh">jshashtable</span> converts the key into a <em>hash code</em>, and
+                        stores the key/value pair in the bucket for that particular hash code. A hash code in
+                        <span class="jsh">jshashtable</span> is a string so that the buckets themselves can be
+                        associated with hash codes using an object and JavaScript's built-in string property names. When
+                        <code><a href="#get">get()</a></code> is called, <span class="jsh">jshashtable</span> finds
+                        the correct bucket for the key it's looking for and then searches the contents of that bucket
+                        for that key. Since the process of locating the correct bucket is massively faster than
+                        searching through a bucket's contents, it is most efficient to have as many buckets as possible
+                        containing the least possible number of items (ideally one). My tests have shown that for a hash
+                        table with 1000 elements, it is around <strong>70 times faster</strong> to replace or retrieve a
+                        value if each key has a unique hash code than if each key had the same hash code (tested using
+                        objects with a very simple <code>hashCode</code> method). For 10000 elements, it's closer to 300
+                        times faster. So, generating meaningful hash codes for keys makes the hash table much more
+                        efficient.
                     </p>
                     <p>
-                        jshashtable generates a hash code for an object by checking to see if it has a
-                        <code>hashCode</code> method and using that if it exists. Otherwise it calls
-                        <code>toString</code> on the object, like JavaScript's built-in square bracket property accessor
-                        does. In the above example, <code>Point</code> has no <code>hashCode</code> method, so every
-                        point placed in <code>coloursForPoints</code> goes into the "[object Object]" bucket, which is
-                        very inefficient, particularly with a larger number of points. What would be better would be to
-                        implement a <code>hashCode</code> method on <code>Point</code> that returns a different value
-                        for every distinct point but the same value for equal points (this is very important: objects
-                        that are considered equal according to their <code>equals</code> method must return the same
-                        hash code). Something like the following would be good:
+                        <span class="jsh">jshashtable</span> generates a hash code for an object by checking to see if
+                        it has a <code>hashCode()</code> method and using that if it exists. Otherwise it calls
+                        <code>toString()</code> on the object, like JavaScript's built-in square bracket property
+                        accessor does. In the above example, <code>Point</code> has no <code>hashCode</code> method, so
+                        every point placed in <code>coloursForPoints</code> goes into the "[object Object]" bucket,
+                        which is very inefficient, particularly with a large number of points. What would be better
+                        would be to implement a <code>hashCode()</code> method on <code>Point</code> that returns a
+                        different value for every distinct point but the same value for equal points (this is very
+                        important: objects that are considered equal according to their <code>equals</code> method must
+                        return the same hash code). Something like the following would be good:
                     </p>
                     <pre class="code">
 Point.prototype.hashCode = function(obj) {
@@ -258,16 +262,17 @@ Point.prototype.hashCode = function(obj) {
                         the hash table is efficient.
                     </p>
                     <p>
-                        The "Point" at the start is there to distinguish points from any other similar object that may
-                        have x and y coordinates and potentially have the same hash code. Note that even if a non-Point
-                        object did return a hash code of "Point:1,2", the hash table would still work fine, since the
-                        non-Point object would fail the equality test when searching through the "Point:1,2" bucket.
+                        The "Point" at the start of the hash code is there to distinguish points from any other similar
+                        object that may have x and y coordinates and potentially have the same hash code. Note that even
+                        if a non-Point object did return a hash code of "Point:1,2", the hash table would still work
+                        fine, since the non-Point object would fail the equality test when searching through the
+                        "Point:1,2" bucket.
                     </p>
                     <p>
-                        If don't want to violate the keys of your hash table by giving them extra methods like
+                        If you don't want to violate the keys of your hash table by giving them extra methods like
                         <code>equals</code> and <code>hashCode</code>, you can instead pass in functions into the
                         <code>Hashtable</code> constructor to generate hash codes and test key equality. The hash code
-                        generator function is passed an object and should return a hash code for that object and the
+                        generator function is passed an object and should return a hash code for that object, while the
                         equality function is passed two objects and should return a boolean value representing whether
                         the two objects are equal. This also has the advantage of improving performance, since the hash
                         table does not have to check for the existence of <code>equals</code> and <code>hashCode</code>
@@ -288,7 +293,7 @@ function Point(x, y) {
 }
 
 function pointsEqual(p1, p2) {
-    return p1.x === p2.x && p1.y === p2.y;
+    return p1.x === p2.x &amp;&amp; p1.y === p2.y;
 }
 
 var coloursForPoints = new Hashtable(hashPoint, pointsEqual);</span>
@@ -350,7 +355,7 @@ alert( getColourAt(1, 2) ); <span class="new">// Alerts green</span>
                     </ul>
                     <h4>Methods</h4>
                     <ul class="propertieslist">
-                        <li class="method">
+                        <li class="method" id="put">
                             <div class="methodsignature"><code>void <strong>put</strong>(Object <em>key</em>, Object
                                 <em>value</em>)</code></div>
                             <div class="summary">
@@ -388,7 +393,7 @@ alert( getColourAt(1, 2) ); <span class="new">// Alerts green</span>
                                 </p>
                             </div>
                         </li>
-                        <li class="method">
+                        <li class="method" id="get">
                             <div class="methodsignature"><code>void <strong>get</strong>(Object
                                 <em>key</em>)</code></div>
                             <div class="summary">
@@ -510,14 +515,11 @@ alert( getColourAt(1, 2) ); <span class="new">// Alerts green</span>
                 </div>
             </div>
             <div id="footer">
-                <span class="externallinkinfo">
-                    <strong>NB.</strong> All external links open in a new window.
-                </span>
                 Written by Tim Down. <a href="mailto:tim@timdown.co.uk">tim@timdown.co.uk</a>
                 <br />
-                jshashtable is distributed under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html"
-                    title="Apache License, Version 2.0 (opens in new window)" target="_blank">Apache License,
-                    Version 2.0</a>
+                <span class="jsh">jshashtable</span> is distributed under the
+                <a href="http://www.apache.org/licenses/LICENSE-2.0.html" title="Apache License, Version 2.0">Apache
+                    License, Version 2.0</a>
             </div>
         </div>
     </body>

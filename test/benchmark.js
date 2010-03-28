@@ -57,13 +57,10 @@ xn.test.suite("JavaScript Hashtable benchmark test suite", function(s) {
 	});
 
 	function testSpeed(initialPuts, gets, replacePuts) {
-		var keySameHashCode, keyDifferentHashCodes;
-		var hSameHashCode, hDifferentHashCodes;
+		var keySameHashCode = [], keyDifferentHashCodes = [];
+		var hSameHashCode = new Hashtable(), hDifferentHashCodes = new Hashtable();
 
-		s.test("Putting " + initialPuts + " objects with same hash code into Hashtable", function(t) {
-			hSameHashCode = new Hashtable();
-			keySameHashCode = [];
-
+		s.test("Putting " + initialPuts + " objects with same hash code into Hashtable", function() {
 			// Create lots of normal objects and put them in the hash table
 			for (var i = 0; i < initialPuts; i++) {
 				keySameHashCode[i] = new NamedObject("name_" + i);
@@ -71,10 +68,7 @@ xn.test.suite("JavaScript Hashtable benchmark test suite", function(s) {
 			}
 		});
 
-		s.test("Putting " + initialPuts + " objects with different hash code into Hashtable", function(t) {
-			hDifferentHashCodes = new Hashtable();
-			keyDifferentHashCodes = [];
-
+		s.test("Putting " + initialPuts + " objects with different hash code into Hashtable", function() {
 			// Create lots of normal objects and put them in the hash table
 			for (var i = 0; i < initialPuts; i++) {
 				keyDifferentHashCodes[i] = new NamedObjectWithHashCode("name_" + i);
@@ -86,14 +80,14 @@ xn.test.suite("JavaScript Hashtable benchmark test suite", function(s) {
 			return Math.floor(Math.random() * initialPuts);
 		}
 
-		s.test("Retrieving " + gets + " objects with same hash code from Hashtable", function(t) {
+		s.test("Retrieving " + gets + " objects with same hash code from Hashtable", function() {
 			// Retrieve objects added at random from the hash table
 			for (var i = 0; i < gets; i++) {
 				hSameHashCode.get(keySameHashCode[getRandomKeyIndex()], i);
 			}
 		});
 
-		s.test("Retrieving " + gets + " objects with different hash code from Hashtable", function(t) {
+		s.test("Retrieving " + gets + " objects with different hash code from Hashtable", function() {
 			// Retrieve objects added at random from the hash table
 			for (var i = 0; i < gets; i++) {
 				hDifferentHashCodes.get(keyDifferentHashCodes[getRandomKeyIndex()], i);
@@ -104,8 +98,8 @@ xn.test.suite("JavaScript Hashtable benchmark test suite", function(s) {
 		var randomKeysDifferent = [];
 		var keyIndex;
 
-		s.test("Set-up", function(t) {
-			for (i = 0; i < replacePuts; i++) {
+		s.test("Set-up", function() {
+			for (var i = 0; i < replacePuts; i++) {
 				keyIndex = getRandomKeyIndex();
 				//console.log("keyIndex: " + keyIndex, keySameHashCode);
 				randomKeysSame[i] = keySameHashCode[keyIndex];
@@ -113,19 +107,39 @@ xn.test.suite("JavaScript Hashtable benchmark test suite", function(s) {
 			}
 		});
 
-		s.test("Replacing " + replacePuts + " objects with same hash code in Hashtable", function(t) {
+		s.test("Replacing " + replacePuts + " objects with same hash code in Hashtable", function() {
 			// Retrieve objects added at random in the hash table
 			for (var i = 0; i < replacePuts; i++) {
 				hSameHashCode.put(randomKeysSame[i], i);
 			}
 		});
 
-		s.test("Replacing " + replacePuts + " objects with different hash code in Hashtable", function(t) {
+		s.test("Replacing " + replacePuts + " objects with different hash code in Hashtable", function() {
 			// Retrieve objects added at random in the hash table
 			for (var i = 0; i < replacePuts; i++) {
 				hDifferentHashCodes.put(randomKeysDifferent[i], i);
 			}
 		});
+
+        s.test("Removing " + replacePuts + " objects", function() {
+            // Remove all objects one by one from the hash table
+            for (var i = 0; i < replacePuts; i++) {
+                hSameHashCode.remove(randomKeysSame[i]);
+            }
+        });
+
+        s.test("Removing " + replacePuts + " objects", function() {
+            // Remove all objects one by one from the hash table
+            for (var i = 0; i < replacePuts; i++) {
+                hDifferentHashCodes.remove(randomKeysDifferent[i]);
+            }
+        });
+
+        s.test("Tear down", function() {
+            hSameHashCode.clear();
+            hDifferentHashCodes.clear();
+            randomKeysSame = randomKeysDifferent = null;
+        });
 	}
 
 	testSpeed(100, 200, 500);

@@ -168,15 +168,15 @@ var xn = new Object();
 
 	/* Configure the test logger try to use FireBug */
 	var log, error;
-	if (window["console"] && typeof console.log == "function") {
+	if (window.console && typeof window.console.log == "function") {
 		log = function() {
 			if (xn.test.enableTestDebug) {
-				console.log.apply(console, arguments);
+				window.console.log.apply(console, arguments);
 			}
 		};
 		error = function() {
 			if (xn.test.enableTestDebug) {
-				console.error.apply(console, arguments);
+				window.console.error.apply(console, arguments);
 			}
 		};
 	} else {
@@ -192,7 +192,6 @@ var xn = new Object();
 	var suites = [];
 	var totalTestCount = 0;
 	var currentTestIndex = 0;
-	var testFailed = false;
 	var testsPassedCount = 0;
 	var startTime;
 	var loaded = false;
@@ -543,7 +542,7 @@ var xn = new Object();
 				self.fail(message);
 			}
 		};
-		var timer = setTimeout(function () { timedOutFunc.apply(self, []); }, timeout);
+		window.setTimeout(function () { timedOutFunc.apply(self, []); }, timeout);
 		this.isAsync = true;
 	};
 
@@ -730,6 +729,59 @@ var xn = new Object();
 		}
 	};
 
+
+    var indexOf = Array.prototype.indexOf ?
+        function(arr, val, from) {
+            return arr.indexOf(val, from);
+        } :
+
+        function(arr, val, from) {
+            var len = arr.length;
+
+            from = Number(arguments[2]) || 0;
+            from = Math.floor( Math.max(from, 0) );
+
+            for (; from < len; from++) {
+                if ((typeof arr[from] != "undefined") && arr[from] === val) {
+                    return from;
+                }
+            }
+            return -1;
+        };
+
+    function contains(arr, val) {
+        return indexOf(arr, val) > -1;
+    }
+
+    function arraysHaveSameElements(arr1, arr2) {
+        var l = arr1.length, i = l;
+        if (l == arr2.length) {
+            while (i--) {
+                if (!contains(arr2, arr1[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    var testArraysSameElements = function(values) {
+        return (arraysHaveSameElements(values[0], values[1]));
+    };
+
+    var testArraysNotSameElements = function(values) {
+        return (arraysHaveSameElements(values[0], values[1]));
+    };
+
+    Test.prototype.assertArraysSameElements = function() {
+        assert.apply(this, [arguments, 2, testArraysSameElements, "Expected array {0} to have same set of elements as {1} but it didn't"]);
+    };
+
+    Test.prototype.assertArraysNotSameElements = function() {
+        assert.apply(this, [arguments, 2, testArraysNotSameElements, "Expected array {0} to have a different set of elements to {1} but it didn't"]);
+    };
+
 	/**
 	 * Execute a synchronous test
 	 */
@@ -743,7 +795,7 @@ var xn = new Object();
 	 * Create a test suite with a given name
 	 */
 	xn.test.suite = function(name, callback, hideSuccessful) {
-		var s = new Suite(name, callback, hideSuccessful);
+		return new Suite(name, callback, hideSuccessful);
 	};
 
 	addEventListener(window, "load", function() {

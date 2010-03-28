@@ -23,7 +23,7 @@
  * Author: Tim Down <tim@timdown.co.uk>
  * Version: 2.1
  * Build date: 21 March 2010
- * Website: http://www.timdown.co.uk/jshashtable
+ * Website: http://www.timdown.co.uk/jshashtable/
  */
 
 var Hashtable = (function() {

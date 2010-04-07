@@ -469,6 +469,37 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
 		t.assertNull(r2);
 	});
 
+    s.test("equals empty test", function(t) {
+        var h1 = new Hashtable(), h2 = new Hashtable();
+        t.assert(h1.equals(h2));
+        t.assert(h2.equals(h1));
+    });
+
+    s.test("equals empty and non-empty test", function(t) {
+        var h1 = new Hashtable(), h2 = new Hashtable();
+        h2.put("Test", 1);
+        t.assertFalse(h1.equals(h2));
+        t.assertFalse(h2.equals(h1));
+    });
+
+    s.test("equals non-empty and non-empty same elements test", function(t) {
+        var h1 = new Hashtable(), h2 = new Hashtable();
+        h1.put("Test1", 1);
+        h1.put("Test2", 1);
+        h2.put("Test2", 1);
+        h2.put("Test1", 1);
+        t.assert(h1.equals(h2));
+        t.assert(h2.equals(h1));
+    });
+
+    s.test("equals same key, different value test", function(t) {
+        var h1 = new Hashtable(), h2 = new Hashtable();
+        h1.put("Test", 1);
+        h2.put("Test", 2);
+        t.assertFalse(h1.equals(h2));
+        t.assertFalse(h2.equals(h1));
+    });
+
 	if (window && window.ActiveXObject) {
 		s.test("ActiveXObject test", function(t) {
 			var h = new Hashtable();

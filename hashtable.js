@@ -21,8 +21,8 @@
  * in the global scope.
  *
  * Author: Tim Down <tim@timdown.co.uk>
- * Version: 2.1
- * Build date: 21 March 2010
+ * Version: 2.2
+ * Build date: 7 April 2010
  * Website: http://www.timdown.co.uk/jshashtable/
  */
 
@@ -364,6 +364,22 @@ var Hashtable = (function() {
 			clone.putAll(that);
 			return clone;
 		};
+
+        this.equals = function(hashtable) {
+            var keys, key, val, count = this.size();
+            if (count == hashtable.size()) {
+                keys = this.keys();
+                while (count--) {
+                    key = keys[count];
+                    val = hashtable.get(key);
+                    if (val === null || val !== this.get(key)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false
+        }
 	}
 
 	return Hashtable;

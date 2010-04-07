@@ -21,9 +21,10 @@
  * It is distributed as part of jshashtable and depends on jshashtable.js. It creates a single constructor function
  * called HashSet in the global scope.
  *
+ * Depends on: jshashtable.js
  * Author: Tim Down <tim@timdown.co.uk>
- * Version: 2.1
- * Build date: 27 March 2010
+ * Version: 2.2
+ * Build date: 7 April 2010
  * Website: http://www.timdown.co.uk/jshashtable/
  */
 

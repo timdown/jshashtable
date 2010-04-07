@@ -1,9 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 	<head>
-		<title>jshashtable, a JavaScript hash table</title>
+		<title>jshashset, a JavaScript implementation of HashSet</title>
 		<meta name="author" content="Tim Down - tim@timdown.co.uk">
-		<meta name="keywords" content="hashtable, hash, JavaScript, DHTML, hashmap">
+		<meta name="keywords" content="hash, set, JavaScript, hashmap, hashset, hashtable, DHTML">
 		<meta name="description" content="jshashtable, a JavaScript hash table implementation">
 		<meta name="robots" content="all">
 		<link rel="stylesheet" type="text/css" href="main.css" title="Default">
@@ -11,7 +11,7 @@
 	<body>
         <div id="container" class="nonav">
             <div id="header">
-                <h1>jshashtable 2.2</h1>
+                <h1>jshashset 2.2</h1>
                 <div id="nav">
                     <span class="navitem">home</span>
                     | <a class="navitem" href="http://code.google.com/p/jshashtable/downloads/list"
@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div id="content">
-                <h1>jshashtable 2.2</h1>
+                <h1>jshashset 2.2</h1>
                 <div id="toc">
                     <h2>Contents</h2>
                     <ul>
@@ -34,18 +34,13 @@
                 <div id="intro">
                     <h2>Introduction</h2>
                     <p>
-                        <span class="jsh">jshashtable</span> is a JavaScript implementation of a hash table. It
-                        associates objects ("keys") with other objects ("values"). Each key is associated with precisely
-                        one value.
+                        <span class="jsh">jshashset</span> is a JavaScript implementation of HashSet, as found in Java
+                        or C#'s standard libraries. It depends on <a href="index.html">jshashtable</a> and uses the keys
+                        of a <span class="jsh">jshashtable</span> hash table as the underlying set.
                     </p>
                     <p>
-                        Version 2.0 of <span class="jsh">jshashtable</span> features significant performance
-                        improvements over version 1.0 (typically 200% faster for <code>put</code> and <code>get</code>
-                        operations) and adds a few new methods: <code>clone()</code>, <code>putAll()</code>,
-                        <code>entries()</code> and <code>each()</code>. Version 2.2 includes a new <code>equals()</code>
-                        method and <a href="jshashset.html">jshashset</a>, a JavaScript implementation of HashSet,
-                        similar in concept to those found in Java or C#'s standard libraries, using the keys of a
-                        jshashtable hash table as the underlying set.
+                        <span class="jsh">jshashset</span> was first included with version 2.2 of
+                        <span class="jsh">jshashtable</span>.
                     </p>
                     <p class="linktotop">
                         <a href="#container">Top</a>
@@ -58,37 +53,42 @@
                             <h3>Download the code</h3>
                             <p>
                                 <strong><a href="http://code.google.com/p/jshashtable/downloads/list"
-                                           title="Download">Download jshashtable</a></strong>.
-                                You can download a compressed or uncompressed version of <code>jshashtable.js</code>
-                                which are functionally identical or a zip containing this document and both JavaScript
-                                files.
+                                           title="Download">Download jshashset</a></strong>.
+                                You can download a compressed or uncompressed version of <code>jshashset.js</code>
+                                which are functionally identical or a zip containing compressed and uncompressed code
+                                for both <span class="jsh">jshashtable</span> and <span class="jsh">jshashset</span>
+                                plus documentation.
                             </p>
                         </li>
                         <li>
-                            <h3>Include jshashtable in your page</h3>
+                            <h3>Include jshashtable and jshashset in your page</h3>
                             <p>
-                                Include <code>jshashtable.js</code> in a script tag in your page. This file creates one
-                                object in the global scope, which is <code>Hashtable</code>.
+                                Include <code>jshashtable.js</code> and <code>jshashset.js</code> in script tags in your
+                                page. This file creates two objects in the global scope, which are
+                                <code>Hashtable</code> and <code>HashSet</code>.
                             </p>
                         </li>
                         <li>
-                            <h3>Create your hash table</h3>
+                            <h3>Create your hash set</h3>
                             <p>
-                                Create your hash table, as in the example below. Any non-null, non-undefined JavaScript
-                                object can be used as a key or a value.
+                                Create your hash set, as in the example below. Any non-null, non-undefined JavaScript
+                                object can be used as member of the set.
                             </p>
                     <pre class="code">
 &lt;script type="text/javascript" src="jshashtable.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="jshashset.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript"&gt;
-    var typesHash = new Hashtable();
+    var dinosaurs = new HashSet();
 
-    typesHash.put("A string", "string");
-    typesHash.put(1, "number");
+    dinosaurs.add("Triceratops");
+    dinosaurs.add("Diplodocus");
+    dinosaurs.add("Stegosaurus");
 
     var o = new Object();
     typesHash.put(o, "object");
 
-    alert( typesHash.get(o) ); // "object"
+    alert( dinosaurs.values.join(",") );
+    /* Triceratops,Diplodocus,Stegosaurus */
 &lt;/script&gt;
 </pre>
                         </li>

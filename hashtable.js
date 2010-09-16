@@ -1,5 +1,11 @@
 /**
+ * @license jahashtable, a JavaScript implementation of a hash table. It creates a single constructor function called
+ * Hashtable in the global scope.
+ *
+ * http://www.timdown.co.uk/jshashtable/
  * Copyright 2010 Tim Down.
+ * Version: %%build:version%%
+ * Build date: %%build:date%%
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +19,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/**
- * jshashtable
- *
- * jshashtable is a JavaScript implementation of a hash table. It creates a single constructor function called Hashtable
- * in the global scope.
- *
- * Author: Tim Down <tim@timdown.co.uk>
- * Version: 2.2
- * Build date: 7 April 2010
- * Website: http://www.timdown.co.uk/jshashtable/
- */
-
 var Hashtable = (function() {
-	var FUNCTION = "function";
+	var FUNCTION = "function", STRING = "string", UNDEF = "undefined";
 
 	var arrayRemoveAt = (typeof Array.prototype.splice == FUNCTION) ?
 		function(arr, idx) {
@@ -47,15 +40,10 @@ var Hashtable = (function() {
 			}
 		};
 
-	function hashObject(obj) {
-		var hashCode;
-		if (typeof obj == "string") {
-			return obj;
-		} else if (typeof obj.hashCode == FUNCTION) {
-			// Check the hashCode method really has returned a string
-			hashCode = obj.hashCode();
-			return (typeof hashCode == "string") ? hashCode : hashObject(hashCode);
-		} else if (typeof obj.toString == FUNCTION) {
+    function toStr(obj) {
+        if (typeof obj == STRING) {
+            return obj;
+        } else if (typeof obj.toString == FUNCTION) {
 			return obj.toString();
 		} else {
 			try {
@@ -65,6 +53,19 @@ var Hashtable = (function() {
 				// passed to String()
 				return Object.prototype.toString.call(obj);
 			}
+		}
+    }
+
+	function hashObject(obj) {
+		var hashCode;
+		if (typeof obj == STRING) {
+			return obj;
+		} else if (typeof obj.hashCode == FUNCTION) {
+			// Check the hashCode method really has returned a string
+			hashCode = obj.hashCode();
+			return (typeof hashCode == STRING) ? hashCode : hashObject(hashCode);
+		} else {
+            return toStr(obj);
 		}
 	}
 
@@ -81,7 +82,7 @@ var Hashtable = (function() {
 		return function(kv) {
 			if (kv === null) {
 				throw new Error("null is not a valid " + kvStr);
-			} else if (typeof kv == "undefined") {
+			} else if (typeof kv == UNDEF) {
 				throw new Error(kvStr + " must not be undefined");
 			}
 		};
@@ -92,15 +93,17 @@ var Hashtable = (function() {
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	function Bucket(hash, firstKey, firstValue, equalityFunction) {
-        this[0] = hash;
-		this.entries = [];
-		this.addEntry(firstKey, firstValue);
+        if (typeof hash != UNDEF) {
+            this[0] = hash;
+            this.entries = [];
+            this.addEntry(firstKey, firstValue);
 
-		if (equalityFunction !== null) {
-			this.getEqualityFunction = function() {
-				return equalityFunction;
-			};
-		}
+            if (equalityFunction !== null) {
+                this.getEqualityFunction = function() {
+                    return equalityFunction;
+                };
+            }
+        }
 	}
 
 	var EXISTENCE = 0, ENTRY = 1, ENTRY_INDEX_AND_VALUE = 2;
@@ -178,8 +181,117 @@ var Hashtable = (function() {
 				}
 			}
 			return false;
-		}
+		},
+
+        isEmpty: function() {
+            return this.entries.length == 0;
+        }
 	};
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+
+    function SimpleBucket(hash, firstKey, firstValue) {
+        this[0] = hash;
+        this.values = [];
+        this.keys = [];
+        this.addEntry(firstKey, firstValue);
+    }
+
+    var createSimpleBucketSearcher = Array.prototype.indexOf ?
+        function(mode) {
+            return function(key) {
+                var index = this.keys.indexOf(key);
+                if (index == -1) {
+                    return false;
+                } else {
+                    switch (mode) {
+                        case EXISTENCE:
+                            return true;
+                        case ENTRY:
+                            return [ key,  this.values[index] ];
+                        case ENTRY_INDEX_AND_VALUE:
+                            return [ index, this.values[index] ];
+                    }
+                }
+            };
+        } :
+
+        function(mode) {
+            return function(key) {
+                var i = this.keys.length, bucketKey;
+                while (i--) {
+                    bucketKey = this.keys[i];
+                    if (bucketKey === key) {
+                        switch (mode) {
+                            case EXISTENCE:
+                                return true;
+                            case ENTRY:
+                                return [ key,  this.values[i] ];
+                            case ENTRY_INDEX_AND_VALUE:
+                                return [ i, this.values[i] ];
+                        }
+                    }
+                }
+                return false;
+            };
+        };
+
+    var simpleProto = SimpleBucket.prototype = new Bucket();
+
+    simpleProto.getEntryForKey = createSimpleBucketSearcher(ENTRY);
+
+    simpleProto.getEntryAndIndexForKey = createSimpleBucketSearcher(ENTRY_INDEX_AND_VALUE);
+
+    simpleProto.removeEntryForKey = function(key) {
+        var result = this.getEntryAndIndexForKey(key);
+        if (result) {
+            arrayRemoveAt(this.keys, result[0]);
+            arrayRemoveAt(this.values, result[0]);
+            return result[1];
+        }
+        return null;
+    };
+
+    simpleProto.addEntry = function(key, value) {
+        this.keys[this.keys.length] = key;
+        this.values[this.values.length] = value;
+    };
+
+    simpleProto.keys = function() {
+        return this.keys.slice(0);
+    };
+
+    simpleProto.values = function() {
+        return this.values.slice(0);
+    };
+
+    simpleProto.getEntries = function(entries) {
+        var keys = this.keys, vals = this.values, startIndex = entries.length;
+        for (var i = 0, len = keys.length; i < len; ++i) {
+            entries[startIndex + i] = [ keys[i], vals[i] ];
+        }
+    };
+
+    simpleProto.containsKey = createSimpleBucketSearcher(EXISTENCE);
+
+    simpleProto.containsValue = Array.prototype.indexOf ?
+        function(value) {
+            return this.values.indexOf(value) > -1;
+        } :
+
+        function(value) {
+            var vals = this.values, i = vals.length;
+            while (i--) {
+                if (vals[i] === value) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+    simpleProto.isEmpty = function() {
+        return this.keys.length == 0;
+    };
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
@@ -205,13 +317,37 @@ var Hashtable = (function() {
 
 	/*----------------------------------------------------------------------------------------------------------------*/
 
-	function Hashtable(hashingFunctionParam, equalityFunctionParam) {
+	function Hashtable() {
 		var that = this;
 		var buckets = [];
 		var bucketsByHash = {};
+        var hashingFunction, equalityFunction = null, useKeyEqualsMethod = true, simpleBuckets = false;
+        var properties = {
+            hashingFunction: hashObject,
+            equalityFunction: null,
+            useKeyEqualsMethod: true
+        };
 
-		var hashingFunction = (typeof hashingFunctionParam == FUNCTION) ? hashingFunctionParam : hashObject;
-		var equalityFunction = (typeof equalityFunctionParam == FUNCTION) ? equalityFunctionParam : null;
+        this.properties = properties;
+
+        switch (arguments.length) {
+            case 0:
+                break;
+            case 1:
+                properties = arguments[0];
+                break;
+            case 2:
+                properties.hashingFunction = arguments[0];
+                properties.equalityFunction = arguments[1];
+                break;
+            default:
+                throw new Error("Incorrect number of arguments supplied to Hashtable constructor (must be 0, 1 or 2)");
+        }
+
+        hashingFunction = properties.hashingFunction || hashObject;
+        equalityFunction = properties.equalityFunction || null;
+        useKeyEqualsMethod = (typeof properties.useKeyEqualsMethod == UNDEF) ? true : properties.useKeyEqualsMethod;
+        simpleBuckets = !equalityFunction && !useKeyEqualsMethod;
 
 		this.put = function(key, value) {
 			checkKey(key);
@@ -233,7 +369,8 @@ var Hashtable = (function() {
 				}
 			} else {
 				// No bucket exists for the key, so create one and put our key/value mapping in
-				bucket = new Bucket(hash, key, value, equalityFunction);
+                bucket = simpleBuckets ?
+                         new SimpleBucket(hash, key, value) : new Bucket(hash, key, value, equalityFunction);
 				buckets[buckets.length] = bucket;
 				bucketsByHash[hash] = bucket;
 			}
@@ -315,7 +452,7 @@ var Hashtable = (function() {
 				oldValue = bucket.removeEntryForKey(key);
 				if (oldValue !== null) {
 					// Entry was removed, so check if bucket is empty
-					if (!bucket.entries.length) {
+					if (bucket.isEmpty()) {
 						// Bucket is empty, so remove it from the bucket collections
 						bucketIndex = searchBuckets(buckets, hash);
 						arrayRemoveAt(buckets, bucketIndex);
@@ -333,39 +470,18 @@ var Hashtable = (function() {
 			}
 			return total;
 		};
+	}
 
-		this.each = function(callback) {
-			var entries = that.entries(), i = entries.length, entry;
-			while (i--) {
-				entry = entries[i];
-				callback(entry[0], entry[1]);
-			}
-		};
+    Hashtable.prototype = {
+        each: function(callback) {
+            var entries = this.entries(), i = entries.length, entry;
+            while (i--) {
+                entry = entries[i];
+                callback(entry[0], entry[1]);
+            }
+        },
 
-		this.putAll = function(hashtable, conflictCallback) {
-			var entries = hashtable.entries();
-			var entry, key, value, thisValue, i = entries.length;
-			var hasConflictCallback = (typeof conflictCallback == FUNCTION);
-			while (i--) {
-				entry = entries[i];
-				key = entry[0];
-				value = entry[1];
-
-				// Check for a conflict. The default behaviour is to overwrite the value for an existing key
-				if ( hasConflictCallback && (thisValue = that.get(key)) ) {
-					value = conflictCallback(key, thisValue, value);
-				}
-				that.put(key, value);
-			}
-		};
-
-		this.clone = function() {
-			var clone = new Hashtable(hashingFunctionParam, equalityFunctionParam);
-			clone.putAll(that);
-			return clone;
-		};
-
-        this.equals = function(hashtable) {
+        equals: function(hashtable) {
             var keys, key, val, count = this.size();
             if (count == hashtable.size()) {
                 keys = this.keys();
@@ -378,9 +494,44 @@ var Hashtable = (function() {
                 }
                 return true;
             }
-            return false
-        }
-	}
+            return false;
+        },
+
+        putAll: function(hashtable, conflictCallback) {
+			var entries = hashtable.entries();
+			var entry, key, value, thisValue, i = entries.length;
+			var hasConflictCallback = (typeof conflictCallback == FUNCTION);
+			while (i--) {
+				entry = entries[i];
+				key = entry[0];
+				value = entry[1];
+
+				// Check for a conflict. The default behaviour is to overwrite the value for an existing key
+				if ( hasConflictCallback && (thisValue = this.get(key)) ) {
+					value = conflictCallback(key, thisValue, value);
+				}
+				this.put(key, value);
+			}
+		},
+
+        clone: function() {
+			var clone = new Hashtable(this.properties);
+			clone.putAll(this);
+			return clone;
+		}
+    };
+
+    if (typeof encodeURIComponent != UNDEF) {
+        Hashtable.prototype.toQueryString = function() {
+            var entries = this.entries(), i = entries.length, entry;
+            var parts = [];
+            while (i--) {
+                entry = entries[i];
+                parts[i] = encodeURIComponent( toStr(entry[0]) ) + "=" + encodeURIComponent( toStr(entry[1]) );
+            }
+            return parts.join("&");
+        };
+    }
 
 	return Hashtable;
 })();

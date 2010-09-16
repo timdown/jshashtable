@@ -500,6 +500,19 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
         t.assertFalse(h2.equals(h1));
     });
 
+    s.test("toQueryString", function(t) {
+        var h = new Hashtable();
+        t.assert(h.toQueryString() == "");
+        h.put("Test", "one");
+        t.assert(h.toQueryString() == "Test=one");
+        h.put("num", 2);
+        var query = h.toQueryString();
+        t.assert(query == "Test=one&num=2" || query == "num=2&Test=one");
+        h.clear();
+        h.put("A space", "1/2");
+        t.assert(h.toQueryString() == "A%20space=1%2F2");
+    });
+
 	if (window && window.ActiveXObject) {
 		s.test("ActiveXObject test", function(t) {
 			var h = new Hashtable();

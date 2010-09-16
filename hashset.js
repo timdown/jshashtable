@@ -28,8 +28,8 @@
  * Website: http://www.timdown.co.uk/jshashtable/
  */
 
-function HashSet(hashingFunction, equalityFunction) {
-    var hashTable = new Hashtable(hashingFunction, equalityFunction);
+function HashSet(param1, param2) {
+    var hashTable = new Hashtable(param1, param2);
 
     this.add = function(o) {
         hashTable.put(o, true);
@@ -67,13 +67,13 @@ function HashSet(hashingFunction, equalityFunction) {
     };
 
     this.clone = function() {
-        var h = new HashSet(hashingFunction, equalityFunction);
+        var h = new HashSet(param1, param2);
         h.addAll(hashTable.keys());
         return h;
     };
 
     this.intersection = function(hashSet) {
-        var intersection = new HashSet(hashingFunction, equalityFunction);
+        var intersection = new HashSet(param1, param2);
         var values = hashSet.values(), i = values.length, val;
         while (i--) {
             val = values[i];

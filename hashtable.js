@@ -318,7 +318,6 @@ var Hashtable = (function() {
 	/*----------------------------------------------------------------------------------------------------------------*/
 
 	function Hashtable() {
-		var that = this;
 		var buckets = [];
 		var bucketsByHash = {};
         var hashingFunction, equalityFunction = null, useKeyEqualsMethod = true, simpleBuckets = false;
@@ -532,6 +531,23 @@ var Hashtable = (function() {
             return parts.join("&");
         };
     }
+
+    Hashtable.fromObject = function(obj) {
+        var hashTable = new Hashtable({
+            hashingFunction: toStr,
+            useKeyEqualsMethod: false
+        });
+        var val, hasOwnPropertyExists = (typeof obj.hasOwnProperty != UNDEF);
+        for (var k in obj) {
+            if ((!hasOwnPropertyExists || obj.hasOwnProperty(k))) {
+                val = obj[k];
+                if (typeof val != UNDEF && val !== null) {
+                    hashTable.put(k, val);
+                }
+            }
+        }
+        return hashTable;
+    };
 
 	return Hashtable;
 })();

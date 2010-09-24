@@ -83,14 +83,14 @@ xn.test.suite("JavaScript Hashtable benchmark test suite", function(s) {
 		s.test("Retrieving " + gets + " objects with same hash code from Hashtable", function() {
 			// Retrieve objects added at random from the hash table
 			for (var i = 0; i < gets; i++) {
-				hSameHashCode.get(keySameHashCode[getRandomKeyIndex()], i);
+				hSameHashCode.get(keySameHashCode[getRandomKeyIndex()]);
 			}
 		});
 
 		s.test("Retrieving " + gets + " objects with different hash code from Hashtable", function() {
 			// Retrieve objects added at random from the hash table
 			for (var i = 0; i < gets; i++) {
-				hDifferentHashCodes.get(keyDifferentHashCodes[getRandomKeyIndex()], i);
+				hDifferentHashCodes.get(keyDifferentHashCodes[getRandomKeyIndex()]);
 			}
 		});
 

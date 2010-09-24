@@ -200,7 +200,6 @@ xn.test.suite("JavaScript HashSet test suite", function(s) {
 
     s.test("Union empty test", function(t) {
         var s1 = new HashSet(), s2 = new HashSet();
-        var o1 = {}, o2 = {};
 
         var union1 = s1.union(s2);
         var union2 = s2.union(s1);
@@ -257,5 +256,32 @@ xn.test.suite("JavaScript HashSet test suite", function(s) {
 
         t.assertTrue(s2.isSubsetOf(s1));
         t.assertFalse(s1.isSubsetOf(s2));
+    });
+
+    s.test("Complement test", function(t) {
+        var s1 = new HashSet(), s2 = new HashSet();
+        var o1 = {}, o2 = {}, o3 = {};
+
+        s1.add(o1);
+        s1.add(o2);
+        s1.add(o3);
+
+        s2.add(o2);
+
+        var complement1 = s1.complement(s2);
+        var complement2 = s2.complement(s1);
+
+        t.assertArraysSameElements([o1, o3], complement1.values());
+        t.assertEquals(0, complement2.values().length);
+    });
+
+    s.test("Complement empty test", function(t) {
+        var s1 = new HashSet(), s2 = new HashSet();
+
+        var complement1 = s1.complement(s2);
+        var complement2 = s2.complement(s1);
+
+        t.assertEquals(0, complement1.values().length);
+        t.assertEquals(0, complement2.values().length);
     });
 });

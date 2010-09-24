@@ -23,8 +23,8 @@
  *
  * Depends on: jshashtable.js
  * Author: Tim Down <tim@timdown.co.uk>
- * Version: 2.2
- * Build date: 7 April 2010
+ * Version: %%build:version%%
+ * Build date: %%build:date%%
  * Website: http://www.timdown.co.uk/jshashtable/
  */
 
@@ -104,5 +104,17 @@ function HashSet(param1, param2) {
             }
         }
         return true;
+    };
+
+    this.complement = function(hashSet) {
+        var complement = new HashSet(param1, param2);
+        var values = this.values(), i = values.length, val;
+        while (i--) {
+            val = values[i];
+            if (!hashSet.contains(val)) {
+                complement.add(val);
+            }
+        }
+        return complement;
     };
 }

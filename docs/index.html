@@ -36,7 +36,7 @@
                     <p>
                         <span class="jsh">jshashtable</span> is a JavaScript implementation of a hash table. It
                         associates objects ("keys") with other objects ("values"). Each key is associated with precisely
-                        one value.
+                        one value. "Objects" here is used loosely to mean any JavaScript object or value.
                     </p>
                     <p>
                         Version 2.0 of <span class="jsh">jshashtable</span> features significant performance
@@ -75,7 +75,7 @@
                             <h3>Create your hash table</h3>
                             <p>
                                 Create your hash table, as in the example below. Any non-null, non-undefined JavaScript
-                                object can be used as a key or a value.
+                                value can be used as a key or a value.
                             </p>
                     <pre class="code">
 &lt;script type="text/javascript" src="jshashtable.js"&gt;&lt;/script&gt;
@@ -85,7 +85,7 @@
     typesHash.put("A string", "string");
     typesHash.put(1, "number");
 
-    var o = new Object();
+    var o = {};
     typesHash.put(o, "object");
 
     alert( typesHash.get(o) ); // "object"
@@ -100,32 +100,28 @@
                 <div id="usage">
                     <h2>Usage</h2>
                     <p>
-                        <span class="jsh">jshashtable</span> is a JavaScript implementation of a hash table. It
-                        associates objects ("keys") with other objects ("values"). Each key is associated with precisely
-                        one value.
-                    </p>
-                    <p>
                         The code is contained in one JavaScript file, which creates a single constructor function called
                         <code>Hashtable</code> in the global scope.
                     </p>
                     <h3>Doesn't JavaScript already do this?</h3>
                     <p>
-                        No, although JavaScript's built-in objects do provide this functionality using the square
-                        brackets notation for properties, <strong>provided your keys are strings or numbers</strong>:
+                        No, although properties of JavaScript's built-in objects can be used for this purpose,
+                        <strong>provided all your keys are strings</strong>. The following is simple and works:
                     </p>
                     <pre class="code">
 var key = "A key";
-var o = new Object();
+var o = {};
 o[key] = 1;
+alert( o[key] ); // Alerts 1
 </pre>
                     <p>
                         However, it is often desirable to use other kinds of objects as keys. JavaScript doesn't
-                        complain if you try to use objects other than strings and numbers inside square brackets;
+                        complain if you try to use values other than strings and numbers inside square brackets;
                         indeed, it superficially looks like this kind of association works for any object:
                     </p>
                     <pre class="code">
-var key = new Object();
-var o = new Object();
+var key = {};
+var o = {};
 o[key] = "First";
 alert( o[key] ); // Alerts "First"
 </pre>
@@ -133,25 +129,27 @@ alert( o[key] ); // Alerts "First"
                         It doesn't take much effort to discover the flaw in this approach:
                     </p>
                     <pre class="code">
-var key1 = new Object();
-var key2 = new Object();
-var o = new Object();
+var key1 = {};
+var key2 = {};
+var o = {};
 o[key1] = "First";
 o[key2] = "Second";
 alert( o[key1] ); // Alerts "Second", not "First"
 </pre>
                     <p>
-                        The reason for this is that JavaScript silently calls <code>toString()</code> on the object
-                        being passed in as the key and uses the result as the property name. In the example above,
-                        <code>key1</code> and <code>key2</code> both become "[object Object]", hence the second
-                        assignment simply replaces the original value of the property "[object Object]".
+                        The reason for this is that in JavaScript, <strong>all object property names are
+                        strings</strong>, and any non-string value placed inside a square bracket property accessor is
+                        converted into a string. In the example above, <code>key1</code> and <code>key2</code> are both
+                        converted to "[object Object]", hence the second assignment simply replaces the original value
+                        of the "[object Object]" property.
                     </p>
                     <p>
-                        With <span class="jsh">jshashtable</span>, any object can be used as the key:
+                        With <span class="jsh">jshashtable</span>, any JavaScript value apart from <code>null</code>
+                        and <code>undefined</code> can be used as a key :
                     </p>
                     <pre class="code">
-var key1 = new Object();
-var key2 = new Object();
+var key1 = {};
+var key2 = {};
 var h = new Hashtable();
 h.put(key1, "First");
 h.put(key2, "Second");
@@ -159,7 +157,7 @@ alert( h.get(key1) ); // Alerts "First"
 alert( h.get(key2) ); // Alerts "Second"
 </pre>
                     <p>
-                        The above examples shows use of <code><a href="#put">put()</a></code> to add a key/value pair to
+                        The above example shows use of <code><a href="#put">put()</a></code> to add a key/value pair to
                         the hash table and <code><a href="#get">get()</a></code> to retrieve a value. If a value already
                         exists in the hash table for the key used, it is replaced with the new value.
                     </p>
@@ -193,10 +191,10 @@ alert( getColourAt(1, 2) ); // Alerts null
                         used as key in the <code>coloursForPoints</code> hash table. This is clearly not the ideal
                         behaviour - any two <code>Point</code> objects with the same x and y values are to all intents
                         and purposes the same thing. What we need is a way of defining when two objects are equal. By
-                        default, <span class="jsh">jshashtable</span> uses the strict equals (<code>===</code>) operator
-                        in JavaScript. However, if one of the objects being compared has an <code>equals</code> method,
-                        it will use that instead. We can implement an <code>equals</code> method in the above example to
-                        get the behaviour we want:
+                        default, <span class="jsh">jshashtable</span> uses the strict equality (<code>===</code>)
+                        operator in JavaScript. However, if one of the objects being compared has an
+                        <code>equals()</code> method, it will use that instead. We can implement an
+                        <code>equals()</code> method in the above example to get the behaviour we want:
                     </p>
                     <pre class="code">
 function Point(x, y) {
@@ -236,21 +234,21 @@ alert( getColourAt(1, 2) ); // <span class="new">Alerts "green"</span>
                         containing the least possible number of items (ideally one). My tests have shown that for a hash
                         table with 1000 elements, it is around <strong>70 times faster</strong> to replace or retrieve a
                         value if each key has a unique hash code than if each key had the same hash code (tested using
-                        objects with a very simple <code>hashCode</code> method). For 10000 elements, it's closer to 300
-                        times faster. So, generating meaningful hash codes for keys makes the hash table much more
+                        objects with a very simple <code>hashCode()</code> method). For 10000 elements, it's closer to
+                        300 times faster. So, generating meaningful hash codes for keys makes the hash table much more
                         efficient.
                     </p>
                     <p>
                         <span class="jsh">jshashtable</span> generates a hash code for an object by checking to see if
                         it has a <code>hashCode()</code> method and using that if it exists. Otherwise it calls
                         <code>toString()</code> on the object, like JavaScript's built-in square bracket property
-                        accessor does. In the above example, <code>Point</code> has no <code>hashCode</code> method, so
-                        every point placed in <code>coloursForPoints</code> goes into the "[object Object]" bucket,
+                        accessor does. In the above example, <code>Point</code> has no <code>hashCode()</code> method,
+                        so every point placed in <code>coloursForPoints</code> goes into the "[object Object]" bucket,
                         which is very inefficient, particularly with a large number of points. What would be better
                         would be to implement a <code>hashCode()</code> method on <code>Point</code> that returns a
                         different value for every distinct point but the same value for equal points (this is very
-                        important: objects that are considered equal according to their <code>equals</code> method must
-                        return the same hash code). Something like the following would be good:
+                        important: two objects that are considered equal according to their <code>equals()</code> method
+                        <strong>must</strong> return the same hash code). Something like the following would be good:
                     </p>
                     <pre class="code">
 Point.prototype.hashCode = function(obj) {
@@ -271,13 +269,13 @@ Point.prototype.hashCode = function(obj) {
                     </p>
                     <p>
                         If you don't want to violate the keys of your hash table by giving them extra methods like
-                        <code>equals</code> and <code>hashCode</code>, you can instead pass in functions into the
+                        <code>equals()</code> and <code>hashCode()</code>, you can instead pass in functions into the
                         <code>Hashtable</code> constructor to generate hash codes and test key equality. The hash code
                         generator function is passed an object and should return a hash code for that object, while the
                         equality function is passed two objects and should return a boolean value representing whether
                         the two objects are equal. This also has the advantage of improving performance, since the hash
-                        table does not have to check for the existence of <code>equals</code> and <code>hashCode</code>
-                        methods on every key object.
+                        table does not have to check for the existence of <code>equals()</code> and
+                        <code>hashCode()</code> methods on every key object.
                     </p>
                     <p>
                         For a hash table where you knew in advance that all the keys would be <code>Point</code>
@@ -329,6 +327,10 @@ alert( getColourAt(1, 2) ); <span class="new">// Alerts green</span>
                                 <code><strong>Hashtable</strong>(Function <em>hashingFunction</em>, Function
                                     <em>equalityFunction</em>)</code>
                             </div>
+                            <p class="summary">
+                                Creates a new, empty hash table with the supplied hashing function and equality
+                                function.
+                            </p>
                             <div class="paramsheading">Parameters:</div>
                             <ul class="params">
                                 <li class="param">
@@ -336,8 +338,8 @@ alert( getColourAt(1, 2) ); <span class="new">// Alerts green</span>
                                     <div>
                                         A function that provides hash codes for keys placed in the hash table.
                                         It is passed the object to be hashed as its only parameter. If not provided,
-                                        the hash table checks whether the object has a <code>hashCode</code> method,
-                                        and if not, calls <code>toString</code> on the object.
+                                        the hash table checks whether the object has a <code>hashCode()</code> method,
+                                        and if not, calls <code>toString()</code> on the object.
                                     </div>
                                 </li>
                                 <li class="param">
@@ -347,7 +349,7 @@ alert( getColourAt(1, 2) ); <span class="new">// Alerts green</span>
                                         Two keys that are considered equal will map to the same value in the hash table.
                                         This function is passed the two objects to be compared as its parameters.
                                         If not provided, the hash table checks whether either object being compared has
-                                        an <code>equals</code> method, and if not, compares the objects using the
+                                        an <code>equals()</code> method, and if not, compares the objects using the
                                         <code>===</code> operator.
                                     </div>
                                 </li>
@@ -357,7 +359,7 @@ alert( getColourAt(1, 2) ); <span class="new">// Alerts green</span>
                     <h4>Methods</h4>
                     <ul class="propertieslist">
                         <li class="method" id="put">
-                            <div class="methodsignature"><code>void <strong>put</strong>(Object <em>key</em>, Object
+                            <div class="methodsignature"><code>mixed <strong>put</strong>(mixed <em>key</em>, mixed
                                 <em>value</em>)</code></div>
                             <div class="summary">
                                 <p class="new">Updated in version 2.0: now returns previous value associated with the
@@ -395,7 +397,7 @@ alert( getColourAt(1, 2) ); <span class="new">// Alerts green</span>
                             </div>
                         </li>
                         <li class="method" id="get">
-                            <div class="methodsignature"><code>void <strong>get</strong>(Object
+                            <div class="methodsignature"><code>mixed <strong>get</strong>(Object
                                 <em>key</em>)</code></div>
                             <div class="summary">
                                 <p>
@@ -414,7 +416,7 @@ alert( getColourAt(1, 2) ); <span class="new">// Alerts green</span>
                             </div>
                         </li>
                         <li class="method">
-                            <div class="methodsignature"><code>Boolean <strong>containsValue</strong>(Object
+                            <div class="methodsignature"><code>Boolean <strong>containsValue</strong>(mixed
                                 <em>value</em>)</code></div>
                             <div class="summary">
                                 <p>
@@ -465,7 +467,7 @@ alert( getColourAt(1, 2) ); <span class="new">// Alerts green</span>
                             </div>
                         </li>
                         <li class="method">
-                            <div class="methodsignature"><code>void <strong>remove</strong>(Object
+                            <div class="methodsignature"><code>mixed <strong>remove</strong>(Object
                                 <em>key</em>)</code></div>
                             <div class="summary">
                                 <p class="new">Updated in version 2.0: now returns the value associated with the removed

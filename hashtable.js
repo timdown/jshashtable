@@ -197,6 +197,17 @@ var Hashtable = (function() {
         this.addEntry(firstKey, firstValue);
     }
 
+    function getSearcherReturnValue(key, values, index, mode) {
+        switch (mode) {
+            case EXISTENCE:
+                return true;
+            case ENTRY:
+                return [ key,  values[index] ];
+            case ENTRY_INDEX_AND_VALUE:
+                return [ index, values[index] ];
+        }
+    }
+
     var createSimpleBucketSearcher = Array.prototype.indexOf ?
         function(mode) {
             return function(key) {
@@ -204,14 +215,7 @@ var Hashtable = (function() {
                 if (index == -1) {
                     return false;
                 } else {
-                    switch (mode) {
-                        case EXISTENCE:
-                            return true;
-                        case ENTRY:
-                            return [ key,  this.values[index] ];
-                        case ENTRY_INDEX_AND_VALUE:
-                            return [ index, this.values[index] ];
-                    }
+                    return getSearcherReturnValue(key, this.values, index, mode);
                 }
             };
         } :
@@ -222,14 +226,7 @@ var Hashtable = (function() {
                 while (i--) {
                     bucketKey = this.keys[i];
                     if (bucketKey === key) {
-                        switch (mode) {
-                            case EXISTENCE:
-                                return true;
-                            case ENTRY:
-                                return [ key,  this.values[i] ];
-                            case ENTRY_INDEX_AND_VALUE:
-                                return [ i, this.values[i] ];
-                        }
+                        return getSearcherReturnValue(key, this.values, i, mode);
                     }
                 }
                 return false;
@@ -329,18 +326,11 @@ var Hashtable = (function() {
 
         this.properties = properties;
 
-        switch (arguments.length) {
-            case 0:
-                break;
-            case 1:
-                properties = arguments[0];
-                break;
-            case 2:
-                properties.hashingFunction = arguments[0];
-                properties.equalityFunction = arguments[1];
-                break;
-            default:
-                throw new Error("Incorrect number of arguments supplied to Hashtable constructor (must be 0, 1 or 2)");
+        if (typeof arguments[1] != UNDEF) {
+            properties.hashingFunction = arguments[0];
+            properties.equalityFunction = arguments[1];
+        } else if (typeof arguments[0] != UNDEF) {
+            properties = arguments[0];
         }
 
         hashingFunction = properties.hashingFunction || hashObject;

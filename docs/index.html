@@ -11,7 +11,7 @@
 	<body>
         <div id="container" class="nonav">
             <div id="header">
-                <h1>jshashtable 2.2</h1>
+                <h1>jshashtable 3.0</h1>
                 <div id="nav">
                     <span class="navitem">home</span>
                     | <a class="navitem" href="http://code.google.com/p/jshashtable/downloads/list"
@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div id="content">
-                <h1>jshashtable 2.2</h1>
+                <h1>jshashtable 3.0</h1>
                 <div id="toc">
                     <h2>Contents</h2>
                     <ul>
@@ -39,13 +39,16 @@
                         one value. "Objects" here is used loosely to mean any JavaScript object or value.
                     </p>
                     <p>
-                        Version 2.0 of <span class="jsh">jshashtable</span> features significant performance
-                        improvements over version 1.0 (typically 200% faster for <code>put</code> and <code>get</code>
-                        operations) and adds a few new methods: <code>clone()</code>, <code>putAll()</code>,
-                        <code>entries()</code> and <code>each()</code>. Version 2.2 includes a new <code>equals()</code>
-                        method and <a href="jshashset.html">jshashset</a>, a JavaScript implementation of HashSet,
-                        similar in concept to those found in Java or C#'s standard libraries, using the keys of a
-                        jshashtable hash table as the underlying set.
+                        Version 3.0 of <span class="jsh">jshashtable</span> adds greater flexibility and improved
+                        performance by allowing client code to specify that key objects are never checked for an
+                        <code>equals()</code> method. This allows much more efficient searching for simple hash tables
+                        where keys will only ever compared using the <code>===</code> operator. Version 3.0 also
+                        includes a new <code>toQueryString()</code> method.
+                    </p>
+                    <p>
+                        Version 3.0 also includes <a href="jshashset.html">jshashset</a>, a JavaScript implementation of
+                        HashSet, similar in concept to those found in Java or C#'s standard libraries, using the keys of
+                        a jshashtable hash table as the underlying set.
                     </p>
                     <p class="linktotop">
                         <a href="#container">Top</a>
@@ -105,8 +108,12 @@
                     </p>
                     <h3>Doesn't JavaScript already do this?</h3>
                     <p>
-                        No, although properties of JavaScript's built-in objects can be used for this purpose,
-                        <strong>provided all your keys are strings</strong>. The following is simple and works:
+                        No. Although a JavaScript object can be used as a hash, there are several limitations that make
+                        using a JavaScript object unsuitable for a generic hash. One limitation is that only strings
+                        and numbers tend to make useful keys.
+                    </p>
+                    <p>
+                        For example, the following is simple and works:
                     </p>
                     <pre class="code">
 var key = "A key";
@@ -161,6 +168,23 @@ alert( h.get(key2) ); // Alerts "Second"
                         the hash table and <code><a href="#get">get()</a></code> to retrieve a value. If a value already
                         exists in the hash table for the key used, it is replaced with the new value.
                     </p>
+                    <p>
+                        Another limitation of using a JavaScript object as a hash is the awkwardness of enumerating its
+                        members. Some libraries add properties to <code>Object.prototype</code> and these properties
+                        are then enumerated for every object (unless the environment is ECMAScript 5 compliant and the
+                        property has been set to be non-enumerable). This means property enumeration looks like this:
+                    </p>
+                    <pre class="code">
+var key = "A key";
+var o = {};
+o[key] = 1;
+
+for (var i in o) {
+    if (o.hasOwnProperty(i)) {
+        alert(i + "=>" + o[i]);
+    }
+}
+</pre>
                     <h3>Equality</h3>
                     <p>
                         This is all very well but there is a drawback. Imagine you have a hash table of colour values at

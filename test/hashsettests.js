@@ -40,6 +40,28 @@ xn.test.suite("JavaScript HashSet test suite", function(s) {
         t.assertEquals(1, s.size());
     });
 
+    s.test("Add repeat elements test - force equality check", function(t) {
+        var allHashValuesAreOne = function() {
+            return 1;
+        };
+
+        var xEqual = function(a, b){
+            return a.x == b.x;
+        };
+
+        var s = new HashSet(allHashValuesAreOne, xEqual);
+
+        var oneOne = { x: 1, y: "ONE" };
+        var oneTwo = { x: 1, y: "TWO" };
+
+        s.add(oneOne);
+        s.add(oneTwo);
+
+        t.assertEquals(1, s.size());
+        t.assertEquals("TWO", s.values()[0].y);
+    });
+
+
     s.test("addAll test", function(t) {
         var s = new HashSet();
         var o1 = {}, o2 = {};

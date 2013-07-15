@@ -40,7 +40,7 @@ xn.test.suite("JavaScript HashSet test suite", function(s) {
         t.assertEquals(1, s.size());
     });
 
-    s.test("Add repeat elements test - force equality check", function(t) {
+    s.test("Add repeat elements test - force equality check (from issue 5)", function(t) {
         var allHashValuesAreOne = function() {
             return 1;
         };
@@ -60,7 +60,29 @@ xn.test.suite("JavaScript HashSet test suite", function(s) {
         t.assertEquals(1, s.size());
         t.assertEquals("TWO", s.values()[0].y);
     });
+    
+    s.test("Duplicate key replacement enabled (issue 3)", function(t) {
+        var s = new HashSet({
+            equals: function(a, b) { return a.id === b.id; }
+        });
+        var o1 = {id: 1, value: "x"}, o2 = {id: 1, value: "y"};
+        s.add(o1);
+        t.assertEquals("x", s.values()[0].value);
+        s.add(o2);   
+        t.assertEquals("y", s.values()[0].value);
+    });
 
+    s.test("Duplicate key replacement disabled (issue 3)", function(t) {
+        var s = new HashSet({
+            equals: function(a, b) { return a.id === b.id; },
+            replaceDuplicateKey: false
+        });
+        var o1 = {id: 1, value: "x"}, o2 = {id: 1, value: "y"};
+        s.add(o1);
+        t.assertEquals("x", s.values()[0].value);
+        s.add(o2);
+        t.assertEquals("x", s.values()[0].value);
+    });
 
     s.test("addAll test", function(t) {
         var s = new HashSet();

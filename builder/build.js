@@ -13,7 +13,7 @@ var buildSpec = {
 
 var buildDir = "build/";
 
-var svnDir = buildDir + "checkout/", srcDir = svnDir;
+var svnDir = buildDir + "checkout/", srcDir = svnDir + "trunk/";
 var zipDir;
 var uncompressedBuildDir;
 var allScripts = [
@@ -63,14 +63,14 @@ function createBuildDir() {
 
 function checkoutSvnRepository() {
     exec("svn checkout " + buildSpec.svnUrl, { cwd: svnDir }, function(error, stdout, stderr) {
-        console.log("Checked out SVN repository ", stdout, stderr);
+        console.log("Checked out SVN repository to " + svnDir + " ", stdout, stderr);
         callback();
     });
 }
 
 function getVersion() {
     exec("svnversion", function(error, stdout, stderr) {
-        buildVersion = buildSpec.baseVersion + "." + stdout.trim().replace(/:/g, "_");
+        buildVersion = buildSpec.baseVersion/* + "." + stdout.trim().replace(/:/g, "_")*/;
         zipDir = buildDir + "jshashtable-" + buildVersion + "/";
         fs.mkdirSync(zipDir);
         uncompressedBuildDir = zipDir + "uncompressed/";
@@ -167,18 +167,13 @@ function minify() {
     function uglify(src, dest) {
         var licence = getLicence(src);
         var uglify = require("uglify-js");
-        var jsp = uglify.parser;
-        var pro = uglify.uglify;
 
         try {
-            var ast = jsp.parse(fs.readFileSync(src, FILE_ENCODING)); // parse code and get the initial AST
-            ast = pro.ast_mangle(ast); // get a new AST with mangled names
-            ast = pro.ast_squeeze(ast); // get an AST with compression optimizations
-            var final_code = pro.gen_code(ast, {
+            var final_code = uglify.minify(src, {
                 ascii_only: true
             });
 
-            fs.writeFileSync(dest, licence + "\r\n" + final_code, FILE_ENCODING);
+            fs.writeFileSync(dest, licence + "\r\n" + final_code.code, FILE_ENCODING);
         } catch (ex) {
             console.log(ex, ex.stack);
             error = true;
@@ -202,7 +197,7 @@ function zip() {
     var tarName = "jshashtable-" + buildVersion + ".tar";
     var tarGzName = "jshashtable-" + buildVersion + ".tar.gz";
     var zipExe = "..\\builder\\tools\\7za";
-    var dir = "rangy-" + buildVersion + "/";
+    var dir = "jshashtable-" + buildVersion + "/";
 
     exec(zipExe + " a -tzip " + zipFileName + " " + dir, { cwd: buildDir }, function(error, stdout, stderr) {
         console.log("Zipped", stdout, stderr);
@@ -227,8 +222,8 @@ var actions = [
     createBuildDir,
     checkoutSvnRepository,
     getVersion,
-    clean,
     copyScripts,
+    clean,
     substituteBuildVars,
     minify,
     zip

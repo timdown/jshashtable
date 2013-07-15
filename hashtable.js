@@ -398,24 +398,5 @@ var Hashtable = (function(UNDEFINED) {
         return parts.join("&");
     };
 
-    /*
-    Hashtable.fromObject = function(obj) {
-        var hashTable = new Hashtable({
-            toHash: toStr,
-            useKeyEqualsMethod: false
-        });
-        var val, hasOwnPropertyExists = (typeof obj.hasOwnProperty != UNDEF);
-        for (var k in obj) {
-            if ((!hasOwnPropertyExists || obj.hasOwnProperty(k))) {
-                val = obj[k];
-                if (typeof val != UNDEF && val !== null) {
-                    hashTable.put(k, val);
-                }
-            }
-        }
-        return hashTable;
-    };
-*/
-
     return Hashtable;
 })();

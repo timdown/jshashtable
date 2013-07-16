@@ -197,26 +197,26 @@ var Hashtable = (function(UNDEFINED) {
         var bucketsByHash = {};
         var properties = {
             replaceDuplicateKey: true,
-            toHash: hashObject,
+            hashCode: hashObject,
             equals: null
         };
 
         var arg0 = arguments[0], arg1 = arguments[1];
         if (arg1 !== UNDEFINED) {
-            properties.toHash = arg0;
+            properties.hashCode = arg0;
             properties.equals = arg1;
         } else if (arg0 !== UNDEFINED) {
             merge(properties, arg0);
         }
 
-        var toHash = properties.toHash, equals = properties.equals;
+        var hashCode = properties.hashCode, equals = properties.equals;
 
         this.properties = properties;
 
         this.put = function(key, value) {
             checkKey(key);
             checkValue(value);
-            var hash = toHash(key), bucket, bucketEntry, oldValue = null;
+            var hash = hashCode(key), bucket, bucketEntry, oldValue = null;
 
             // Check if a bucket exists for the bucket key
             bucket = getBucketForHash(bucketsByHash, hash);
@@ -247,7 +247,7 @@ var Hashtable = (function(UNDEFINED) {
         this.get = function(key) {
             checkKey(key);
 
-            var hash = toHash(key);
+            var hash = hashCode(key);
 
             // Check if a bucket exists for the bucket key
             var bucket = getBucketForHash(bucketsByHash, hash);
@@ -264,7 +264,7 @@ var Hashtable = (function(UNDEFINED) {
 
         this.containsKey = function(key) {
             checkKey(key);
-            var bucketKey = toHash(key);
+            var bucketKey = hashCode(key);
 
             // Check if a bucket exists for the bucket key
             var bucket = getBucketForHash(bucketsByHash, bucketKey);
@@ -309,7 +309,7 @@ var Hashtable = (function(UNDEFINED) {
         this.remove = function(key) {
             checkKey(key);
 
-            var hash = toHash(key), bucketIndex, oldValue = null;
+            var hash = hashCode(key), bucketIndex, oldValue = null;
 
             // Check if a bucket exists for the bucket key
             var bucket = getBucketForHash(bucketsByHash, hash);

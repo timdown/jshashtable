@@ -7,7 +7,7 @@ var exec = require("child_process").exec;
 var FILE_ENCODING = "utf-8";
 
 var buildSpec = {
-    baseVersion: "2.2",
+    baseVersion: "3.0",
     svnUrl: "http://jshashtable.googlecode.com/svn/trunk/"
 };
 
@@ -87,37 +87,6 @@ function copyScripts() {
     console.log("Copied scripts");
     callback();
 }
-
-/*
-function concatCoreScripts() {
-    function prependJsPath(fileList) {
-        return fileList.map(function(filePath) {
-            return srcDir + "core/" + filePath;
-        });
-    }
-
-    // Read in the list of files to build
-    var files = ["core.js", "dom.js", "domrange.js", "wrappedrange.js", "wrappedselection.js"];
-
-    // Append js directory path to scripts
-    var scripts = prependJsPath(files);
-    console.log("Obtained list of scripts", files);
-
-    // Build a single concatenated JS file
-    concat(scripts, uncompressedBuildDir + coreFilename);
-
-    console.log("Concatenated core scripts");
-    callback();
-}
-
-function copyModuleScripts() {
-    modules.forEach(function(moduleFile) {
-        copyFileSync(srcDir + "modules/" + moduleFile, uncompressedBuildDir + moduleFile);
-    });
-    console.log("Copied module scripts");
-    callback();
-}
-*/
 
 function clean() {
     var rimraf = require("rimraf");

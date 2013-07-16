@@ -101,6 +101,40 @@ xn.test.suite("JavaScript HashSet test suite", function(s) {
         t.assertArraysSameElements(vals, s.values());
     });
 
+    s.test("addAll equal values, replace enabled test", function(t) {
+        var allHashCodesTheSame = function() { return "1"; };
+        var allEqual = function() { return true; };
+
+        var s = new HashSet({
+            hashCode: allHashCodesTheSame,
+            equals: allEqual,
+            replaceDuplicateKey: true
+        });
+        var o1 = {}, o2 = {};
+        var vals = [o1, o2];
+        s.add(o1);
+        s.addAll(vals);
+        t.assertEquals(s.size(), 1);
+        t.assertEquivalent(s.values()[0], o2);
+    });
+
+    s.test("addAll equal values, replace disabled test", function(t) {
+        var allHashCodesTheSame = function() { return "1"; };
+        var allEqual = function() { return true; };
+
+        var s = new HashSet({
+            hashCode: allHashCodesTheSame,
+            equals: allEqual,
+            replaceDuplicateKey: false
+        });
+        var o1 = {}, o2 = {};
+        var vals = [o1, o2];
+        s.add(o1);
+        s.addAll(vals);
+        t.assertEquals(s.size(), 1);
+        t.assertEquivalent(s.values()[0], o1);
+    });
+
     s.test("Removal size test", function(t) {
         var s = new HashSet();
         var o = {};

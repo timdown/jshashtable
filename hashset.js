@@ -36,8 +36,7 @@ function HashSet(param1, param2) {
     };
 
     this.addAll = function(arr) {
-        var i = arr.length;
-        while (i--) {
+        for (var i = 0, len = arr.length; i < len; ++i) {
             hashTable.put(arr[i], true);
         }
     };

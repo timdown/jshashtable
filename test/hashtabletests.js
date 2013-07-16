@@ -691,7 +691,7 @@ xn.test.suite("JavaScript Hashtable test suite", function(s) {
             return p1.x === p2.x && p1.y === p2.y;
         }
 
-        var coloursForPoints = new Hashtable(hashPoint, pointsEqual);
+        var coloursForPoints = new Hashtable( { hashCode: hashPoint, equals: pointsEqual } );
 
         function getColourAt(x, y) {
             var point = new Point(x, y);

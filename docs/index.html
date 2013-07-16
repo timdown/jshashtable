@@ -1,14 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-	<head>
-		<title>jshashtable, a JavaScript hash table</title>
-		<meta name="author" content="Tim Down - tim@timdown.co.uk">
-		<meta name="keywords" content="hashtable, hash, JavaScript, ECMAScript, JScript, hashmap, hashset, hashcode">
-		<meta name="description" content="jshashtable, a JavaScript hash table implementation">
-		<meta name="robots" content="all">
-		<link rel="stylesheet" type="text/css" href="main.css" title="Default">
-	</head>
-	<body>
+    <head>
+        <title>jshashtable, a JavaScript hash table</title>
+        <meta name="author" content="Tim Down - tim@timdown.co.uk">
+        <meta name="keywords" content="hashtable, hash, JavaScript, ECMAScript, JScript, hashmap, hashset, hashcode">
+        <meta name="description" content="jshashtable, a JavaScript hash table implementation">
+        <meta name="robots" content="all">
+        <link rel="stylesheet" type="text/css" href="main.css" title="Default">
+    </head>
+    <body>
         <div id="container" class="nonav">
             <div id="header">
                 <h1>jshashtable 3.0</h1>
@@ -39,16 +39,17 @@
                         one value. "Objects" here is used loosely to mean any JavaScript object or value.
                     </p>
                     <p>
-                        Version 3.0 of <span class="jsh">jshashtable</span> adds greater flexibility and improved
-                        performance by allowing client code to specify that key objects are never checked for an
-                        <code>equals()</code> method. This allows much more efficient searching for simple hash tables
-                        where keys will only ever compared using the <code>===</code> operator. Version 3.0 also
-                        includes a new <code>toQueryString()</code> method.
+                        Version 3.0 of <span class="jsh">jshashtable</span> includes new <code>equals()</code> and
+                        <code>toQueryString()</code> methods, switches to using an options object in the constructor,
+                        adds an option to control what happens when <code>put()</code> is called with a duplicate key
+                        and fixes some obscure bugs. Version 3 also drops support for IE 5.0 on Windows in order to
+                        minimize file size. IE 5.5 and later are still supported.
                     </p>
                     <p>
-                        Version 3.0 also includes <a href="jshashset.html">jshashset</a>, a JavaScript implementation of
-                        HashSet, similar in concept to those found in Java or C#'s standard libraries, using the keys of
-                        a jshashtable hash table as the underlying set.
+                        Version 3.0 also includes <a href="jshashset.html">jshashset</a>, a JavaScript HashSet
+                        implementation, similar in concept to those found in Java or C#'s standard libraries, using the
+                        keys of a jshashtable hash table as the underlying set. It was previously available as a
+                        separate download for version 2.1.
                     </p>
                     <p class="linktotop">
                         <a href="#container">Top</a>
@@ -63,8 +64,8 @@
                                 <strong><a href="http://code.google.com/p/jshashtable/downloads/list"
                                            title="Download">Download jshashtable</a></strong>.
                                 You can download a compressed or uncompressed version of <code>jshashtable.js</code>
-                                which are functionally identical or a zip containing this document and both JavaScript
-                                files.
+                                which are functionally identical or a zip containing all JavaScript files plus all
+                                documentation.
                             </p>
                         </li>
                         <li>
@@ -171,7 +172,7 @@ alert( h.get(key2) ); // Alerts "Second"
                     <p>
                         Another limitation of using a JavaScript object as a hash is the awkwardness of enumerating its
                         members. Some libraries add properties to <code>Object.prototype</code> and these properties
-                        are then enumerated for every object (unless the environment is ECMAScript 5 compliant and the
+                        are then enumerated for every object (unless the environment is ECMAScript 5-compliant and the
                         property has been set to be non-enumerable). This means property enumeration looks like this:
                     </p>
                     <pre class="code">
@@ -187,10 +188,11 @@ for (var i in o) {
 </pre>
                     <h3>Equality</h3>
                     <p>
-                        This is all very well but there is a drawback. Imagine you have a hash table of colour values at
-                        various different positions on the screen. Each position on the screen is represented by a
-                        <code>Point</code> object, which has properties <code>x</code> and <code>y</code>, representing
-                        the x and y coordinates of the point on the screen.
+                        Once you start dealing with arbitrary objects as keys, other issues arise. For example, imagine
+                        you have a hash table of colour values at various different positions on the screen. Each
+                        position on the screen is represented by a <code>Point</code> object, which has properties
+                        <code>x</code> and <code>y</code>, representing the x and y coordinates of the point on the
+                        screen.
                     </p>
                     <pre class="code">
 function Point(x, y) {
@@ -319,7 +321,7 @@ function pointsEqual(p1, p2) {
     return p1.x === p2.x &amp;&amp; p1.y === p2.y;
 }
 
-var coloursForPoints = new Hashtable(hashPoint, pointsEqual);</span>
+var coloursForPoints = new Hashtable( { hashCode: hashPoint, equals: pointsEqual } );</span>
 
 function getColourAt(x, y) {
     var point = new Point(x, y);
@@ -348,17 +350,18 @@ alert( getColourAt(1, 2) ); <span class="new">// Alerts green</span>
                         </li>
                         <li class="method">
                             <div class="methodsignature">
-                                <code><strong>Hashtable</strong>(Function <em>hashingFunction</em>, Function
-                                    <em>equalityFunction</em>)</code>
+                                <code><strong>Hashtable</strong>(Object <em>options</em>)</code>
                             </div>
-                            <p class="summary">
-                                Creates a new, empty hash table with the supplied hashing function and equality
-                                function.
-                            </p>
-                            <div class="paramsheading">Parameters:</div>
+                            <div class="summary">
+                                <p class="new">New in version 3.0</p>
+                                <p>
+                                    Creates a new, empty hash table with the supplied options.
+                                </p>
+                            </div>
+                            <div class="paramsheading">Option properties:</div>
                             <ul class="params">
                                 <li class="param">
-                                    <code class="paramname">hashingFunction</code>
+                                    <code class="paramname">hashCode</code>
                                     <div>
                                         A function that provides hash codes for keys placed in the hash table.
                                         It is passed the object to be hashed as its only parameter. If not provided,
@@ -367,7 +370,7 @@ alert( getColourAt(1, 2) ); <span class="new">// Alerts green</span>
                                     </div>
                                 </li>
                                 <li class="param">
-                                    <code class="paramname">equalityFunction</code>
+                                    <code class="paramname">equals</code>
                                     <div>
                                         A function that checks for equality between two keys with the same hash code.
                                         Two keys that are considered equal will map to the same value in the hash table.
@@ -376,6 +379,46 @@ alert( getColourAt(1, 2) ); <span class="new">// Alerts green</span>
                                         an <code>equals()</code> method, and if not, compares the objects using the
                                         <code>===</code> operator.
                                     </div>
+                                </li>
+                                <li class="param">
+                                    <code class="paramname">replaceDuplicateKey</code>
+                                    <p class="new">New in version 3.0</p>
+                                    <p>
+                                        Controls what happens when <code>put()</code> is called with a key that is equal
+                                        to an existing key in the hash table. If <code>replaceDuplicateKey</code> is
+                                        <code>true</code>, the existing key is always replaced by the new key.
+                                        Otherwise, the existing key is left in place (which is what always happened
+                                        prior to version 3.0). The default is <code>true</code>; prior to version 3.0.
+                                    </p>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="method">
+                            <div class="methodsignature">
+                                <code><strong>Hashtable</strong>(Function <em>hashingFunction</em>, Function
+                                    <em>equalityFunction</em>)</code>
+                            </div>
+                            <p class="summary">
+                                Creates a new, empty hash table with the supplied hashing function and equality
+                                function. This form maintains backwards compatibility with versions prior to 3.0.
+                                The following line
+                            </p>
+                            <pre class="code">
+var hash = new Hashtable(hashingFunction, equalityFunction);
+</pre>
+                            <p>... is equivalent to</p>
+                            <pre class="code">
+var hash = new Hashtable( { hashCode: hashingFunction, equals: equalityFunction } );
+</pre>
+                            <div class="paramsheading">Parameters:</div>
+                            <ul class="params">
+                                <li class="param">
+                                    <code class="paramname">hashingFunction</code>
+                                    <p>See above.</p>
+                                </li>
+                                <li class="param">
+                                    <code class="paramname">equalityFunction</code>
+                                    <p>See above.</p>
                                 </li>
                             </ul>
                         </li>
@@ -538,11 +581,22 @@ alert( getColourAt(1, 2) ); <span class="new">// Alerts green</span>
                         <li class="method">
                             <div class="methodsignature"><code>Boolean <strong>equals</strong>(Hashtable
                                 <em>hashtable</em>)</code></div>
-                            <p class="new">New in version 2.2</p>
+                            <p class="new">New in version 3.0</p>
                             <div class="summary">
                                 <p>
                                     Returns <code>true</code> if all key/value pairs in the hash table provided are
-                                    identical to those in this hash table and <code>false</code> otherwise.
+                                    identical to those in this hash table and <code>false</code> otherwise. Values are
+                                    compared using the strict equality (<code>===</code>) operator.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="method">
+                            <div class="methodsignature"><code>String <strong>toQueryString</strong>()</code></div>
+                            <p class="new">New in version 3.0</p>
+                            <div class="summary">
+                                <p>
+                                    Returns a URL-encoded string representing the hash table as query parameters
+                                    suitable for HTTP requests.
                                 </p>
                             </div>
                         </li>

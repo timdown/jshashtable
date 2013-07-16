@@ -88,6 +88,16 @@ function copyScripts() {
     callback();
 }
 
+function copyDocs() {
+    var srcDocsDir = srcDir + "docs/";
+    var docsBuildDir = zipDir + "docs/";
+    fs.mkdirSync(docsBuildDir);
+    ["index.html", "jshashset.html", "main.css"].forEach(function(fileName) {
+        copyFileSync(srcDocsDir + fileName, docsBuildDir + fileName);
+    });
+    callback();
+}
+
 function clean() {
     var rimraf = require("rimraf");
     rimraf(svnDir, function() {
@@ -192,6 +202,7 @@ var actions = [
     checkoutSvnRepository,
     getVersion,
     copyScripts,
+    copyDocs,
     clean,
     substituteBuildVars,
     minify,

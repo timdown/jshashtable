@@ -1,0 +1,22 @@
+{
+  "name": "jshashtable",
+  "homepage": "http://www.timdown.co.uk/jshashtable/",
+  "authors": [
+    "Tim Down <tim@timdown.co.uk>"
+  ],
+  "description": "A standalone JavaScript implementation of hash table with arbitrary keys",
+  "main": "hashtable.js",
+  "keywords": [
+    "hastable",
+    "javascript",
+    "hashmap"
+  ],
+  "license": "Apache License, Version 2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
